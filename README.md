@@ -26,3 +26,4 @@ Felhasznalo/jelszo az app.py-ben van:
 
 A kepek a received_images mappaba kerulnek, az adatok pedig a vehicles.db SQLite fajlba.
 
+# ANPR_PROJEKT
