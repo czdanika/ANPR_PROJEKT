@@ -102,8 +102,9 @@ def fetch_vehicles():
         conn = sqlite3.connect(DATABASE_FILE)
         cursor = conn.cursor()
         cursor.execute('''
-            SELECT license_plate, vehicle_type, vehicle_color, vehicle_direction, timestamp, confidence_level, image_path 
+            SELECT license_plate, vehicle_type, vehicle_color, vehicle_direction, timestamp, confidence_level, image_path
             FROM anpr_events
+            ORDER BY timestamp DESC
         ''')
         rows = cursor.fetchall()
         conn.close()
