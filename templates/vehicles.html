@@ -36,9 +36,7 @@
             --shadow: 0 20px 60px rgba(0, 0, 0, 0.35);
         }
 
-        * {
-            box-sizing: border-box;
-        }
+        * { box-sizing: border-box; }
 
         body {
             margin: 0;
@@ -49,71 +47,34 @@
             transition: background 0.2s ease, color 0.2s ease;
         }
 
-        .page {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 32px 20px 80px;
-        }
-
-        header {
-            display: grid;
-            gap: 18px;
-            margin-bottom: 24px;
-        }
+        .page { max-width: 1200px; margin: 0 auto; padding: 32px 20px 80px; }
+        header { display: grid; gap: 18px; margin-bottom: 24px; }
 
         .topbar {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            gap: 12px;
+            display: flex; align-items: center;
+            justify-content: space-between; gap: 12px;
         }
 
-        .title {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
+        .title { display: flex; align-items: center; gap: 12px; }
 
         .badge {
             font-family: 'IBM Plex Mono', monospace;
-            padding: 6px 10px;
-            border-radius: 999px;
+            padding: 6px 10px; border-radius: 999px;
             background: rgba(91, 124, 250, 0.12);
             border: 1px solid rgba(91, 124, 250, 0.35);
-            font-size: 12px;
-            letter-spacing: 0.08em;
-            text-transform: uppercase;
-            color: var(--accent-strong);
+            font-size: 12px; letter-spacing: 0.08em;
+            text-transform: uppercase; color: var(--accent-strong);
         }
 
-        h1 {
-            margin: 0;
-            font-size: clamp(24px, 3vw, 34px);
-            font-weight: 700;
-        }
+        h1 { margin: 0; font-size: clamp(24px, 3vw, 34px); font-weight: 700; }
 
-        .toolbar {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
+        .toolbar { display: flex; align-items: center; gap: 10px; }
 
         .toggle {
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            padding: 8px 12px;
-            border-radius: 999px;
-            border: 1px solid var(--border);
-            background: var(--panel);
-            color: var(--text);
-            font-size: 12px;
-            cursor: pointer;
-        }
-
-        .toggle span {
-            font-family: 'IBM Plex Mono', monospace;
-            letter-spacing: 0.06em;
+            display: inline-flex; align-items: center; gap: 8px;
+            padding: 8px 12px; border-radius: 999px;
+            border: 1px solid var(--border); background: var(--panel);
+            color: var(--text); font-size: 12px; cursor: pointer;
         }
 
         .stats {
@@ -123,51 +84,30 @@
         }
 
         .stat-card {
-            background: var(--panel);
-            border: 1px solid var(--border);
-            border-radius: 16px;
-            padding: 14px 16px;
-            box-shadow: var(--shadow);
+            background: var(--panel); border: 1px solid var(--border);
+            border-radius: 16px; padding: 14px 16px; box-shadow: var(--shadow);
         }
 
-        .stat-label {
-            color: var(--muted);
-            font-size: 12px;
-            text-transform: uppercase;
-            letter-spacing: 0.08em;
-        }
-
-        .stat-value {
-            font-size: 22px;
-            font-weight: 600;
-            margin-top: 6px;
-        }
+        .stat-label { color: var(--muted); font-size: 12px; text-transform: uppercase; letter-spacing: 0.08em; }
+        .stat-value { font-size: 22px; font-weight: 600; margin-top: 6px; }
 
         .filters {
-            background: var(--panel-strong);
-            border: 1px solid var(--border);
-            border-radius: 18px;
-            padding: 18px;
-            display: grid;
-            gap: 14px;
-            box-shadow: var(--shadow);
+            background: var(--panel-strong); border: 1px solid var(--border);
+            border-radius: 18px; padding: 18px; display: grid; gap: 14px; box-shadow: var(--shadow);
         }
 
         .filter-row {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
             gap: 12px;
         }
 
         .input {
-            background: transparent;
-            color: var(--text);
-            border: 1px solid var(--border);
-            border-radius: 12px;
-            padding: 10px 12px;
-            font-size: 14px;
-            outline: none;
+            background: transparent; color: var(--text);
+            border: 1px solid var(--border); border-radius: 12px;
+            padding: 10px 12px; font-size: 14px; outline: none;
             transition: border 0.2s ease, box-shadow 0.2s ease;
+            width: 100%; font-family: inherit;
         }
 
         .input:focus {
@@ -175,25 +115,14 @@
             box-shadow: 0 0 0 3px rgba(91, 124, 250, 0.12);
         }
 
-        .input::placeholder {
-            color: rgba(90, 98, 112, 0.7);
-        }
+        .input::placeholder { color: rgba(90, 98, 112, 0.7); }
 
-        .chips {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 8px;
-        }
+        .chips { display: flex; flex-wrap: wrap; gap: 8px; }
 
         .chip {
-            border-radius: 999px;
-            padding: 6px 12px;
-            font-size: 12px;
-            border: 1px solid var(--border);
-            color: var(--muted);
-            cursor: pointer;
-            transition: all 0.2s ease;
-            background: transparent;
+            border-radius: 999px; padding: 6px 12px; font-size: 12px;
+            border: 1px solid var(--border); color: var(--muted);
+            cursor: pointer; transition: all 0.2s ease; background: transparent;
         }
 
         .chip.active {
@@ -203,139 +132,67 @@
         }
 
         .table-wrap {
-            margin-top: 22px;
-            background: var(--panel-strong);
-            border: 1px solid var(--border);
-            border-radius: 20px;
-            overflow: hidden;
-            box-shadow: var(--shadow);
+            margin-top: 22px; background: var(--panel-strong);
+            border: 1px solid var(--border); border-radius: 20px;
+            overflow: hidden; box-shadow: var(--shadow);
         }
 
-        table {
-            width: 100%;
-            border-collapse: collapse;
-        }
-
-        thead {
-            background: rgba(91, 124, 250, 0.08);
-        }
-
-        th, td {
-            text-align: left;
-            padding: 14px 16px;
-            font-size: 14px;
-        }
+        table { width: 100%; border-collapse: collapse; }
+        thead { background: rgba(91, 124, 250, 0.08); }
+        th, td { text-align: left; padding: 14px 16px; font-size: 14px; }
 
         th {
-            color: var(--muted);
-            font-weight: 600;
-            text-transform: uppercase;
-            font-size: 12px;
-            letter-spacing: 0.08em;
-            cursor: pointer;
-            position: relative;
+            color: var(--muted); font-weight: 600; text-transform: uppercase;
+            font-size: 12px; letter-spacing: 0.08em; cursor: pointer; position: relative;
         }
 
-        th.sorted-asc::after {
-            content: "▴";
-            position: absolute;
-            right: 12px;
-        }
+        th.no-sort { cursor: default; }
+        th.sorted-asc::after { content: "▴"; position: absolute; right: 12px; }
+        th.sorted-desc::after { content: "▾"; position: absolute; right: 12px; }
 
-        th.sorted-desc::after {
-            content: "▾";
-            position: absolute;
-            right: 12px;
-        }
-
-        tbody tr {
-            border-top: 1px solid var(--border);
-            transition: background 0.2s ease;
-        }
-
-        tbody tr:hover {
-            background: rgba(91, 124, 250, 0.06);
-        }
+        tbody tr { border-top: 1px solid var(--border); transition: background 0.2s ease; }
+        tbody tr:hover { background: rgba(91, 124, 250, 0.06); }
 
         .plate {
             font-family: 'IBM Plex Mono', monospace;
-            font-size: 14px;
-            font-weight: 600;
-            color: var(--accent-strong);
+            font-size: 14px; font-weight: 600; color: var(--accent-strong);
         }
 
-        .confidence {
-            font-weight: 600;
-            color: var(--danger);
+        .camera-badge {
+            display: inline-block;
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 11px; padding: 3px 8px; border-radius: 999px;
+            background: rgba(91, 124, 250, 0.1);
+            border: 1px solid rgba(91, 124, 250, 0.25);
+            color: var(--accent); white-space: nowrap;
         }
+
+        .confidence { font-weight: 600; color: var(--danger); }
 
         .img-thumb {
-            width: 90px;
-            border-radius: 10px;
-            cursor: pointer;
+            width: 90px; border-radius: 10px; cursor: pointer;
             transition: transform 0.2s ease, box-shadow 0.2s ease;
         }
 
-        .img-thumb:hover {
-            transform: scale(1.04);
-            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.18);
-        }
+        .img-thumb:hover { transform: scale(1.04); box-shadow: 0 10px 20px rgba(0,0,0,0.18); }
 
-        .muted {
-            color: var(--muted);
-        }
-
-        .empty {
-            padding: 40px 20px;
-            text-align: center;
-            color: var(--muted);
-        }
+        .muted { color: var(--muted); }
+        .empty { padding: 40px 20px; text-align: center; color: var(--muted); }
 
         #imageModal {
-            display: none;
-            position: fixed;
-            z-index: 10;
-            left: 0;
-            top: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(10, 12, 18, 0.72);
-            backdrop-filter: blur(6px);
+            display: none; position: fixed; z-index: 10;
+            left: 0; top: 0; width: 100%; height: 100%;
+            background: rgba(10, 12, 18, 0.72); backdrop-filter: blur(6px);
         }
 
-        #modalContent {
-            max-width: 860px;
-            margin: 6% auto 0;
-            padding: 12px;
-        }
-
-        #modalContent img {
-            width: 100%;
-            border-radius: 18px;
-            box-shadow: var(--shadow);
-        }
-
-        #closeModal {
-            position: absolute;
-            top: 20px;
-            right: 30px;
-            color: var(--text);
-            font-size: 38px;
-            cursor: pointer;
-        }
+        #modalContent { max-width: 860px; margin: 6% auto 0; padding: 12px; }
+        #modalContent img { width: 100%; border-radius: 18px; box-shadow: var(--shadow); }
+        #closeModal { position: absolute; top: 20px; right: 30px; color: var(--text); font-size: 38px; cursor: pointer; }
 
         @media (max-width: 720px) {
-            th, td {
-                padding: 10px 12px;
-            }
-
-            .img-thumb {
-                width: 70px;
-            }
-
-            .filter-row {
-                grid-template-columns: 1fr;
-            }
+            th, td { padding: 10px 12px; }
+            .img-thumb { width: 70px; }
+            .filter-row { grid-template-columns: 1fr; }
         }
     </style>
 </head>
@@ -345,13 +202,16 @@
             <div class="topbar">
                 <div class="title">
                     <span class="badge">ANPR</span>
-                    <div>
-                        <h1>Jármű események</h1>
-                    </div>
+                    <div><h1>Jármű események</h1></div>
                 </div>
                 <div class="toolbar">
-                    <button class="toggle" id="themeToggle" type="button">
-                        <span id="themeLabel">LIGHT</span>
+                    <div id="mqttStatusBar" style="display:flex;align-items:center;gap:7px;font-size:12px;color:var(--muted);font-family:'IBM Plex Mono',monospace;">
+                        <div id="mqttDot" style="width:8px;height:8px;border-radius:50%;background:var(--muted);transition:background 0.3s;"></div>
+                        <span id="mqttStatusText" style="display:none"></span>
+                    </div>
+                    <a href="/config" style="display:inline-flex;align-items:center;gap:6px;padding:8px 12px;border-radius:999px;border:1px solid var(--border);background:var(--panel);color:var(--text);font-size:13px;font-weight:600;cursor:pointer;text-decoration:none;transition:all 0.2s;">⚙️</a>
+                    <button class="toggle" id="themeToggle" type="button" title="Téma váltása">
+                        <span id="themeIcon">🌙</span>
                     </button>
                 </div>
             </div>
@@ -365,8 +225,8 @@
                     <div class="stat-value" id="statKnown">0</div>
                 </div>
                 <div class="stat-card">
-                    <div class="stat-label">Képpel</div>
-                    <div class="stat-value" id="statWithImage">0</div>
+                    <div class="stat-label">Aktív kamerák</div>
+                    <div class="stat-value" id="statCameras">0</div>
                 </div>
                 <div class="stat-card">
                     <div class="stat-label">Utolsó esemény</div>
@@ -377,9 +237,12 @@
 
         <section class="filters">
             <div class="filter-row">
-                <input class="input" id="searchBox" type="text" placeholder="Keresés rendszám, típus, szín, irány alapján">
+                <input class="input" id="searchBox" type="text" placeholder="Keresés rendszám, típus, szín, kamera…">
                 <input class="input" id="dateFrom" type="date">
                 <input class="input" id="dateTo" type="date">
+                <select class="input" id="cameraFilter">
+                    <option value="">Összes kamera</option>
+                </select>
                 <select class="input" id="typeFilter">
                     <option value="">Összes típus</option>
                 </select>
@@ -407,7 +270,9 @@
                         <th onclick="sortTable(3)">Irány</th>
                         <th onclick="sortTable(4)">Időbélyeg</th>
                         <th onclick="sortTable(5)">Pontosság (%)</th>
-                        <th>Kép</th>
+                        <th onclick="sortTable(6)">Kamera</th>
+                        <th class="no-sort">Kép</th>
+                        <th class="no-sort"></th>
                     </tr>
                 </thead>
                 <tbody>
@@ -420,6 +285,9 @@
                             data-time="{{ vehicle.timestamp }}"
                             data-confidence="{{ vehicle.confidence }}"
                             data-has-image="{{ '1' if vehicle.image else '0' }}"
+                            data-camera-ip="{{ vehicle.ip_address }}"
+                            data-camera="{{ cameras.get(vehicle.ip_address, vehicle.ip_address)|lower }}"
+                            data-id="{{ vehicle.id }}"
                         >
                             <td class="plate">{{ vehicle.license_plate }}</td>
                             <td>{{ vehicle.type }}</td>
@@ -427,6 +295,7 @@
                             <td>{{ vehicle.direction }}</td>
                             <td class="muted">{{ vehicle.timestamp }}</td>
                             <td class="confidence">{{ vehicle.confidence }}</td>
+                            <td><span class="camera-badge">{{ cameras.get(vehicle.ip_address, vehicle.ip_address) }}</span></td>
                             <td>
                                 {% if vehicle.image %}
                                     <img class="img-thumb" src="{{ vehicle.image }}" alt="{{ vehicle.license_plate }}"
@@ -434,6 +303,12 @@
                                 {% else %}
                                     <span class="muted">Nincs</span>
                                 {% endif %}
+                            </td>
+                            <td>
+                                <button onclick="deleteEvent(this, {{ vehicle.id }})"
+                                    style="background:transparent;border:1px solid rgba(216,76,76,0.4);color:var(--danger);border-radius:8px;padding:5px 10px;font-size:12px;font-weight:600;cursor:pointer;font-family:inherit;transition:all 0.2s;"
+                                    onmouseover="this.style.background='rgba(216,76,76,0.1)'"
+                                    onmouseout="this.style.background='transparent'">✕</button>
                             </td>
                         </tr>
                     {% endfor %}
@@ -456,162 +331,104 @@
         const closeModal = document.getElementById("closeModal");
         const emptyState = document.getElementById("emptyState");
         const themeToggle = document.getElementById("themeToggle");
-        const themeLabel = document.getElementById("themeLabel");
+        const themeIcon = document.getElementById("themeIcon");
         const prefersDark = window.matchMedia("(prefers-color-scheme: dark)");
 
         function applyTheme(mode) {
             document.body.classList.toggle("theme-dark", mode === "dark");
-            themeLabel.textContent = mode === "dark" ? "LIGHT" : "DARK";
+            themeIcon.textContent = mode === "dark" ? "☀️" : "🌙";
             localStorage.setItem("anpr-theme", mode);
         }
 
-        const savedTheme = localStorage.getItem("anpr-theme");
-        const initialTheme = savedTheme || (prefersDark.matches ? "dark" : "light");
-        applyTheme(initialTheme);
-
+        applyTheme(localStorage.getItem("anpr-theme") || (prefersDark.matches ? "dark" : "light"));
         themeToggle.addEventListener("click", () => {
-            const next = document.body.classList.contains("theme-dark") ? "light" : "dark";
-            applyTheme(next);
+            applyTheme(document.body.classList.contains("theme-dark") ? "light" : "dark");
         });
 
-        function showModal(src) {
-            modal.style.display = "block";
-            modalImage.src = src;
-        }
-
-        closeModal.onclick = function () {
-            modal.style.display = "none";
-            modalImage.src = "";
-        };
-
-        window.onclick = function (event) {
-            if (event.target === modal) {
-                modal.style.display = "none";
-                modalImage.src = "";
-            }
-        };
+        function showModal(src) { modal.style.display = "block"; modalImage.src = src; }
+        closeModal.onclick = () => { modal.style.display = "none"; modalImage.src = ""; };
+        window.onclick = (e) => { if (e.target === modal) { modal.style.display = "none"; modalImage.src = ""; } };
 
         const rows = Array.from(document.querySelectorAll("#vehicleTable tbody tr"));
         const searchBox = document.getElementById("searchBox");
         const dateFrom = document.getElementById("dateFrom");
         const dateTo = document.getElementById("dateTo");
+        const cameraFilter = document.getElementById("cameraFilter");
         const typeFilter = document.getElementById("typeFilter");
         const colorFilter = document.getElementById("colorFilter");
         const directionFilter = document.getElementById("directionFilter");
         const quickFilters = document.getElementById("quickFilters");
 
+        const cameraNames = {{ cameras | tojson }};
+
         const translations = {
             type: {
-                car: "Személyautó",
-                suv: "SUV",
-                van: "Kisteher",
-                truck: "Teherautó",
-                bus: "Busz",
-                motorcycle: "Motor",
-                bike: "Kerékpár",
+                car: "Személyautó", vehicle: "Jármű", suv: "SUV", suvmpv: "SUV/MPV",
+                mpv: "MPV", van: "Kisteher", truck: "Teherautó", bus: "Busz",
+                motorcycle: "Motor", motorbike: "Motor", bike: "Kerékpár",
+                bicycle: "Kerékpár", tricycle: "Tricikli", pedestrian: "Gyalogos",
                 unknown: "Ismeretlen"
             },
             color: {
-                white: "Fehér",
-                black: "Fekete",
-                gray: "Szürke",
-                grey: "Szürke",
-                silver: "Ezüst",
-                red: "Piros",
-                blue: "Kék",
-                green: "Zöld",
-                yellow: "Sárga",
-                brown: "Barna",
-                orange: "Narancs",
-                unknown: "Ismeretlen"
+                white: "Fehér", black: "Fekete", gray: "Szürke", grey: "Szürke",
+                silver: "Ezüst", red: "Piros", blue: "Kék", green: "Zöld",
+                yellow: "Sárga", brown: "Barna", orange: "Narancs", unknown: "Ismeretlen"
             },
             direction: {
-                approaching: "Közeledik",
-                away: "Távolodik",
-                forward: "Előre",
-                reverse: "Hátra",
-                left: "Balra",
-                right: "Jobbra",
-                unknown: "Ismeretlen"
+                approaching: "Közeledik", away: "Távolodik", forward: "Előre",
+                reverse: "Hátra", left: "Balra", right: "Jobbra", unknown: "Ismeretlen"
             }
         };
 
-        function normalizeUnknown(value) {
-            const normalized = (value || "").trim().toLowerCase();
-            if (!normalized || normalized === "n/a" || normalized === "-") {
-                return "unknown";
-            }
-            if (normalized === "ismeretlen") {
-                return "unknown";
-            }
-            return normalized;
+        function normalizeUnknown(v) {
+            const n = (v || "").trim().toLowerCase();
+            return (!n || n === "n/a" || n === "-" || n === "ismeretlen") ? "unknown" : n;
         }
-
-        function translate(kind, value) {
-            const normalized = normalizeUnknown(value);
-            return translations[kind][normalized] || value || "Ismeretlen";
-        }
-
-        function isUnknown(value) {
-            return normalizeUnknown(value) === "unknown";
-        }
+        function translate(kind, v) { const n = normalizeUnknown(v); return translations[kind][n] || v || "Ismeretlen"; }
+        function isUnknown(v) { return normalizeUnknown(v) === "unknown"; }
 
         rows.forEach(row => {
-            const typeHu = translate("type", row.dataset.type);
-            const colorHu = translate("color", row.dataset.color);
-            const directionHu = translate("direction", row.dataset.direction);
+            row.cells[1].textContent = translate("type", row.dataset.type);
+            row.cells[2].textContent = translate("color", row.dataset.color);
+            row.cells[3].textContent = translate("direction", row.dataset.direction);
+            row.dataset.type = row.cells[1].textContent.toLowerCase();
+            row.dataset.color = row.cells[2].textContent.toLowerCase();
+            row.dataset.direction = row.cells[3].textContent.toLowerCase();
 
-            row.cells[1].textContent = typeHu;
-            row.cells[2].textContent = colorHu;
-            row.cells[3].textContent = directionHu;
+            const ip = row.dataset.cameraIp;
+            const camName = cameraNames[ip] || ip;
+            row.cells[6].querySelector('.camera-badge').textContent = camName;
+            row.dataset.camera = camName.toLowerCase();
 
-            row.dataset.type = typeHu.toLowerCase();
-            row.dataset.color = colorHu.toLowerCase();
-            row.dataset.direction = directionHu.toLowerCase();
-
-            const confidenceRaw = (row.dataset.confidence || "").toString().trim();
-            const confidenceNum = Number(confidenceRaw.replace(",", "."));
-            if (confidenceRaw && !Number.isNaN(confidenceNum)) {
-                row.cells[5].textContent = `${Math.round(confidenceNum)}%`;
-            } else if (confidenceRaw) {
-                row.cells[5].textContent = `${confidenceRaw}%`;
-            } else {
-                row.cells[5].textContent = "0%";
-            }
+            const conf = (row.dataset.confidence || "").toString().trim();
+            const num = Number(conf.replace(",", "."));
+            row.cells[5].textContent = conf && !isNaN(num) ? Math.round(num) + "%" : (conf ? conf + "%" : "0%");
         });
 
         const uniqueValues = (key) => {
             const set = new Set();
-            rows.forEach(row => {
-                const value = row.dataset[key];
-                if (value && value !== "unknown") {
-                    set.add(value);
-                }
-            });
+            rows.forEach(r => { if (r.dataset[key] && r.dataset[key] !== "unknown") set.add(r.dataset[key]); });
             return Array.from(set).sort();
         };
 
         function populateSelect(select, values) {
-            values.forEach(value => {
-                const option = document.createElement("option");
-                option.value = value;
-                option.textContent = value.charAt(0).toUpperCase() + value.slice(1);
-                select.appendChild(option);
+            values.forEach(v => {
+                const opt = document.createElement("option");
+                opt.value = v;
+                opt.textContent = v.charAt(0).toUpperCase() + v.slice(1);
+                select.appendChild(opt);
             });
         }
 
+        populateSelect(cameraFilter, uniqueValues("camera"));
         populateSelect(typeFilter, uniqueValues("type"));
         populateSelect(colorFilter, uniqueValues("color"));
         populateSelect(directionFilter, uniqueValues("direction"));
 
-        const quickState = {
-            known: false,
-            image: false,
-            today: false
-        };
+        const quickState = { known: false, image: false, today: false };
 
-        quickFilters.addEventListener("click", (event) => {
-            const chip = event.target.closest(".chip");
+        quickFilters.addEventListener("click", (e) => {
+            const chip = e.target.closest(".chip");
             if (!chip) return;
             const key = chip.dataset.filter;
             quickState[key] = !quickState[key];
@@ -619,58 +436,40 @@
             applyFilters();
         });
 
-        [searchBox, dateFrom, dateTo, typeFilter, colorFilter, directionFilter].forEach(el => {
+        [searchBox, dateFrom, dateTo, cameraFilter, typeFilter, colorFilter, directionFilter].forEach(el => {
             el.addEventListener("input", applyFilters);
         });
 
-        function parseDate(value) {
-            if (!value) return null;
-            const date = new Date(value);
-            return isNaN(date.getTime()) ? null : date;
-        }
-
-        function rowDate(row) {
-            const raw = row.dataset.time;
-            if (!raw) return null;
-            const date = new Date(raw.replace(" ", "T"));
-            return isNaN(date.getTime()) ? null : date;
-        }
+        function parseDate(v) { if (!v) return null; const d = new Date(v); return isNaN(d) ? null : d; }
+        function rowDate(row) { const r = row.dataset.time; if (!r) return null; const d = new Date(r.replace(" ","T")); return isNaN(d) ? null : d; }
 
         function applyFilters() {
             const text = searchBox.value.toLowerCase();
             const from = parseDate(dateFrom.value);
             const to = parseDate(dateTo.value);
+            const camera = cameraFilter.value;
             const type = typeFilter.value;
             const color = colorFilter.value;
             const direction = directionFilter.value;
-
             let visible = 0;
 
             rows.forEach(row => {
-                const combined = `${row.dataset.plate} ${row.dataset.type} ${row.dataset.color} ${row.dataset.direction}`;
-                const matchesText = combined.includes(text);
-                const matchesType = !type || row.dataset.type === type;
-                const matchesColor = !color || row.dataset.color === color;
-                const matchesDirection = !direction || row.dataset.direction === direction;
+                const combined = `${row.dataset.plate} ${row.dataset.type} ${row.dataset.color} ${row.dataset.direction} ${row.dataset.camera}`;
                 const dt = rowDate(row);
-                const matchesFrom = !from || (dt && dt >= from);
-                const matchesTo = !to || (dt && dt <= new Date(to.getTime() + 86400000 - 1));
-
-                let matchesQuick = true;
-                if (quickState.known) {
-                    matchesQuick = matchesQuick && !isUnknown(row.dataset.plate);
-                }
-                if (quickState.image) {
-                    matchesQuick = matchesQuick && row.dataset.hasImage === "1";
-                }
-                if (quickState.today) {
-                    const today = new Date();
-                    const start = new Date(today.getFullYear(), today.getMonth(), today.getDate());
-                    const end = new Date(today.getFullYear(), today.getMonth(), today.getDate() + 1);
-                    matchesQuick = matchesQuick && dt && dt >= start && dt < end;
-                }
-
-                const show = matchesText && matchesType && matchesColor && matchesDirection && matchesFrom && matchesTo && matchesQuick;
+                const show = combined.includes(text)
+                    && (!camera || row.dataset.camera === camera)
+                    && (!type || row.dataset.type === type)
+                    && (!color || row.dataset.color === color)
+                    && (!direction || row.dataset.direction === direction)
+                    && (!from || (dt && dt >= from))
+                    && (!to || (dt && dt <= new Date(to.getTime() + 86400000 - 1)))
+                    && (!quickState.known || !isUnknown(row.dataset.plate))
+                    && (!quickState.image || row.dataset.hasImage === "1")
+                    && (!quickState.today || (() => {
+                        const s = new Date(); s.setHours(0,0,0,0);
+                        const e = new Date(s); e.setDate(e.getDate()+1);
+                        return dt && dt >= s && dt < e;
+                    })());
                 row.style.display = show ? "" : "none";
                 if (show) visible++;
             });
@@ -680,69 +479,78 @@
         }
 
         function updateStats() {
-            const visibleRows = rows.filter(row => row.style.display !== "none");
-            const total = visibleRows.length;
-            const known = visibleRows.filter(row => !isUnknown(row.dataset.plate)).length;
-            const withImage = visibleRows.filter(row => row.dataset.hasImage === "1").length;
-            const last = visibleRows
-                .map(row => rowDate(row))
-                .filter(Boolean)
-                .sort((a, b) => b - a)[0];
-
-            document.getElementById("statTotal").textContent = total;
-            document.getElementById("statKnown").textContent = known;
-            document.getElementById("statWithImage").textContent = withImage;
+            const vis = rows.filter(r => r.style.display !== "none");
+            const cams = new Set(vis.map(r => r.dataset.cameraIp).filter(Boolean));
+            document.getElementById("statTotal").textContent = vis.length;
+            document.getElementById("statKnown").textContent = vis.filter(r => !isUnknown(r.dataset.plate)).length;
+            document.getElementById("statCameras").textContent = cams.size;
+            const last = vis.map(r => rowDate(r)).filter(Boolean).sort((a,b) => b-a)[0];
             document.getElementById("statLast").textContent = last ? last.toLocaleString() : "—";
         }
 
-        function sortTable(columnIndex) {
+        function sortTable(ci) {
             const table = document.getElementById("vehicleTable");
-            const tbody = table.tBodies[0];
-            const header = table.querySelectorAll("th")[columnIndex];
-            const currentSort = header.getAttribute("data-sort") || "none";
-
-            let nextSort;
-            if (currentSort === "none") {
-                nextSort = "asc";
-            } else if (currentSort === "asc") {
-                nextSort = "desc";
-            } else {
-                nextSort = "none";
-            }
-
-            table.querySelectorAll("th").forEach(th => {
-                th.removeAttribute("data-sort");
-                th.classList.remove("sorted-asc", "sorted-desc");
-            });
-
-            if (nextSort !== "none") {
+            const header = table.querySelectorAll("th")[ci];
+            const cur = header.getAttribute("data-sort") || "none";
+            const next = cur === "none" ? "asc" : cur === "asc" ? "desc" : "none";
+            table.querySelectorAll("th").forEach(th => { th.removeAttribute("data-sort"); th.classList.remove("sorted-asc","sorted-desc"); });
+            if (next !== "none") {
                 rows.sort((a, b) => {
-                    const aText = a.cells[columnIndex].innerText.toLowerCase();
-                    const bText = b.cells[columnIndex].innerText.toLowerCase();
-
-                    const aVal = columnIndex === 4 ? rowDate(a) : aText;
-                    const bVal = columnIndex === 4 ? rowDate(b) : bText;
-
-                    if (aVal instanceof Date && bVal instanceof Date) {
-                        return (nextSort === "asc" ? 1 : -1) * (aVal - bVal);
-                    }
-
-                    if (!isNaN(aText) && !isNaN(bText)) {
-                        return (nextSort === "asc" ? 1 : -1) * (parseFloat(aText) - parseFloat(bText));
-                    }
-                    return (nextSort === "asc" ? 1 : -1) * aText.localeCompare(bText);
+                    const aT = a.cells[ci].innerText.toLowerCase();
+                    const bT = b.cells[ci].innerText.toLowerCase();
+                    const aV = ci === 4 ? rowDate(a) : aT;
+                    const bV = ci === 4 ? rowDate(b) : bT;
+                    if (aV instanceof Date && bV instanceof Date) return (next==="asc"?1:-1)*(aV-bV);
+                    if (!isNaN(aT) && !isNaN(bT)) return (next==="asc"?1:-1)*(parseFloat(aT)-parseFloat(bT));
+                    return (next==="asc"?1:-1)*aT.localeCompare(bT);
                 });
-
-                header.setAttribute("data-sort", nextSort);
-                header.classList.add(nextSort === "asc" ? "sorted-asc" : "sorted-desc");
+                header.setAttribute("data-sort", next);
+                header.classList.add(next === "asc" ? "sorted-asc" : "sorted-desc");
             }
-
-            rows.forEach(row => tbody.appendChild(row));
+            rows.forEach(r => table.tBodies[0].appendChild(r));
             applyFilters();
         }
 
         updateStats();
         applyFilters();
+
+        async function deleteEvent(btn, id) {
+            if (!confirm('Biztosan törlöd ezt az eseményt?')) return;
+            const res = await fetch('/api/events/' + id, { method: 'DELETE' });
+            if (res.ok) {
+                const row = btn.closest('tr');
+                const idx = rows.indexOf(row);
+                if (idx > -1) rows.splice(idx, 1);
+                row.remove();
+                updateStats();
+            }
+        }
+
+        {% if auto_refresh %}
+        const _refreshInterval = {{ refresh_interval }};
+        let _countdown = _refreshInterval;
+        const _refreshInfo = document.createElement('div');
+        _refreshInfo.style.cssText = 'position:fixed;bottom:20px;right:20px;background:var(--panel);border:1px solid var(--border);border-radius:10px;padding:8px 14px;font-size:12px;color:var(--muted);font-family:"IBM Plex Mono",monospace;box-shadow:var(--shadow);';
+        document.body.appendChild(_refreshInfo);
+        const _timer = setInterval(() => {
+            _countdown--;
+            _refreshInfo.textContent = '↻ frissítés: ' + _countdown + 's';
+            if (_countdown <= 0) { clearInterval(_timer); location.reload(); }
+        }, 1000);
+        {% endif %}
+
+        async function checkMqttStatus() {
+            try {
+                const res = await fetch('/api/mqtt/status');
+                const json = await res.json();
+                const dot = document.getElementById('mqttDot');
+                if (!json.enabled) { dot.style.background = 'var(--muted)'; return; }
+                dot.style.background = json.connected ? '#2ecc71' : 'var(--danger)';
+                if (json.connected) dot.style.boxShadow = '0 0 6px rgba(46,204,113,0.5)';
+            } catch(e) {}
+        }
+        checkMqttStatus();
+        setInterval(checkMqttStatus, 10000);
     </script>
 </body>
 </html>

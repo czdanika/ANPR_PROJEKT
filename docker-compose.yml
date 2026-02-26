@@ -7,3 +7,6 @@ services:
     volumes:
       - .:/app
     restart: unless-stopped
+    environment:
+      - ANPR_ADMIN_PASSWORD=password123
+      - ANPR_USER_PASSWORD=userpassword
