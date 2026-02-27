@@ -115,6 +115,7 @@ def initialize_database():
             'mqtt_base_url': 'http://192.168.0.136:5555',
             'auto_refresh': '0',
             'auto_refresh_interval': '30',
+            'events_per_page': '100',
             'image_max_days': '0',
             'image_max_count': '0',
             'webhook_enabled': '0',
@@ -546,16 +547,21 @@ def insert_event_to_db(event_data):
         log_with_timestamp(f"Adatbázis mentési hiba: {e}")
 
 
-def fetch_vehicles():
+def fetch_vehicles(limit=None, offset=0):
     try:
         conn = sqlite3.connect(DATABASE_FILE)
         cursor = conn.cursor()
-        cursor.execute('''
+        sql = '''
             SELECT id, license_plate, vehicle_type, vehicle_color, vehicle_direction,
                    timestamp, confidence_level, image_path, ip_address
             FROM anpr_events
             ORDER BY timestamp DESC
-        ''')
+        '''
+        params = []
+        if limit is not None:
+            sql += ' LIMIT ? OFFSET ?'
+            params = [limit, offset]
+        cursor.execute(sql, params)
         rows = cursor.fetchall()
         conn.close()
         return [
@@ -575,6 +581,18 @@ def fetch_vehicles():
     except sqlite3.Error as e:
         log_with_timestamp(f"Adatbázis lekérdezési hiba: {e}")
         return []
+
+
+def fetch_vehicles_count():
+    try:
+        conn = sqlite3.connect(DATABASE_FILE)
+        cursor = conn.cursor()
+        cursor.execute('SELECT COUNT(*) FROM anpr_events')
+        count = cursor.fetchone()[0]
+        conn.close()
+        return count
+    except:
+        return 0
 
 
 @app.route('/received_images/<path:filename>')
@@ -645,19 +663,27 @@ def receive_event():
 @app.route('/vehicles')
 @auth.login_required
 def vehicle_list():
-    vehicles = fetch_vehicles()
+    page_size = int(get_config('events_per_page', '100') or 100)
+    total_count = fetch_vehicles_count()
+    vehicles = fetch_vehicles(limit=page_size, offset=0)
     auto_refresh = get_config('auto_refresh', '0') == '1'
     refresh_interval = int(get_config('auto_refresh_interval', '30') or 30)
     cameras = get_cameras_dict()
     return render_template('vehicles.html', vehicles=vehicles,
                            auto_refresh=auto_refresh, refresh_interval=refresh_interval,
-                           cameras=cameras)
+                           cameras=cameras, page_size=page_size, total_count=total_count)
 
 
 @app.route('/api/vehicles')
 @auth.login_required
 def vehicles_api():
-    return jsonify(fetch_vehicles())
+    try:
+        limit = int(request.args.get('limit', 0)) or None
+        offset = int(request.args.get('offset', 0))
+    except (ValueError, TypeError):
+        limit = None
+        offset = 0
+    return jsonify(fetch_vehicles(limit=limit, offset=offset))
 
 
 @app.route('/api/latest')
@@ -880,4 +906,5 @@ if __name__ == "__main__":
     initialize_database()
     if get_config('mqtt_enabled', '0') == '1':
         threading.Thread(target=connect_mqtt, daemon=True).start()
-    app.run(debug=True, host='0.0.0.0', port=5555)
+    port = int(os.environ.get('ANPR_PORT', 5555))
+    app.run(debug=True, host='0.0.0.0', port=port)

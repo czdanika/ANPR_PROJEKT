@@ -316,6 +316,21 @@
             </table>
             <div class="empty" id="emptyState" style="display: none;">Nincs találat a megadott szűrőkre.</div>
         </section>
+
+        {% if total_count > vehicles|length %}
+        <div id="loadMoreArea" style="text-align:center;padding:20px 0;">
+            <span style="font-size:13px;color:var(--muted);">
+                Betöltve: <strong id="loadedCount">{{ vehicles|length }}</strong> / <strong>{{ total_count }}</strong>
+            </span>
+            <br><br>
+            <button id="loadMoreBtn" onclick="loadMore()"
+                style="padding:10px 24px;border-radius:10px;font-size:14px;font-weight:600;font-family:inherit;
+                       background:rgba(91,124,250,0.12);border:1px solid rgba(91,124,250,0.4);
+                       color:var(--accent-strong);cursor:pointer;transition:all 0.2s;">
+                ↓ Több betöltése
+            </button>
+        </div>
+        {% endif %}
     </div>
 
     <div id="imageModal">
@@ -349,7 +364,7 @@
         closeModal.onclick = () => { modal.style.display = "none"; modalImage.src = ""; };
         window.onclick = (e) => { if (e.target === modal) { modal.style.display = "none"; modalImage.src = ""; } };
 
-        const rows = Array.from(document.querySelectorAll("#vehicleTable tbody tr"));
+        let rows = Array.from(document.querySelectorAll("#vehicleTable tbody tr"));
         const searchBox = document.getElementById("searchBox");
         const dateFrom = document.getElementById("dateFrom");
         const dateTo = document.getElementById("dateTo");
@@ -524,6 +539,66 @@
                 row.remove();
                 updateStats();
             }
+        }
+
+        // Load more pagination
+        let loadedCount = {{ vehicles|length }};
+        const totalCount = {{ total_count|default(vehicles|length) }};
+        const pageSize = {{ page_size|default(100) }};
+        const cameras_map = {{ cameras | tojson }};
+
+        function createRow(v) {
+            const tr = document.createElement('tr');
+            const camLabel = cameras_map[v.ip_address] || v.ip_address || '';
+            tr.dataset.plate = (v.license_plate || '').toLowerCase();
+            tr.dataset.type = (v.type || '').toLowerCase();
+            tr.dataset.color = (v.color || '').toLowerCase();
+            tr.dataset.direction = (v.direction || '').toLowerCase();
+            tr.dataset.time = v.timestamp || '';
+            tr.dataset.confidence = v.confidence || '';
+            tr.dataset.hasImage = v.image ? '1' : '0';
+            tr.dataset.cameraIp = v.ip_address || '';
+            tr.dataset.camera = camLabel.toLowerCase();
+            tr.dataset.id = v.id;
+            tr.innerHTML = `
+                <td class="plate">${v.license_plate || ''}</td>
+                <td>${v.type || ''}</td>
+                <td>${v.color || ''}</td>
+                <td>${v.direction || ''}</td>
+                <td class="muted">${v.timestamp || ''}</td>
+                <td class="confidence">${v.confidence || ''}</td>
+                <td><span class="camera-badge">${camLabel}</span></td>
+                <td>${v.image ? `<img class="img-thumb" src="${v.image}" alt="${v.license_plate}" onclick="showModal(this.src)"/>` : '<span class="muted">Nincs</span>'}</td>
+                <td><button onclick="deleteEvent(this, ${v.id})"
+                    style="background:transparent;border:1px solid rgba(216,76,76,0.4);color:var(--danger);border-radius:8px;padding:5px 10px;font-size:12px;font-weight:600;cursor:pointer;font-family:inherit;transition:all 0.2s;"
+                    onmouseover="this.style.background='rgba(216,76,76,0.1)'"
+                    onmouseout="this.style.background='transparent'">✕</button></td>
+            `;
+            return tr;
+        }
+
+        async function loadMore() {
+            const btn = document.getElementById('loadMoreBtn');
+            if (btn) { btn.disabled = true; btn.textContent = 'Töltés...'; }
+            try {
+                const res = await fetch(`/api/vehicles?limit=${pageSize}&offset=${loadedCount}`);
+                const data = await res.json();
+                const tbody = document.querySelector('#vehicleTable tbody');
+                data.forEach(v => {
+                    const tr = createRow(v);
+                    tbody.appendChild(tr);
+                    rows.push(tr);
+                });
+                loadedCount += data.length;
+                const countEl = document.getElementById('loadedCount');
+                if (countEl) countEl.textContent = loadedCount;
+                if (loadedCount >= totalCount) {
+                    const area = document.getElementById('loadMoreArea');
+                    if (area) area.style.display = 'none';
+                }
+                applyFilters();
+            } catch(e) { console.error('Betöltési hiba:', e); }
+            if (btn) { btn.disabled = false; btn.textContent = '↓ Több betöltése'; }
         }
 
         {% if auto_refresh %}

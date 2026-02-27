@@ -64,6 +64,13 @@
             justify-content: space-between;
             margin-bottom: 32px;
             gap: 12px;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            background: var(--bg);
+            padding: 12px 0;
+            border-bottom: 1px solid var(--border);
+            backdrop-filter: blur(10px);
         }
 
         .title { display: flex; align-items: center; gap: 12px; }
@@ -395,6 +402,8 @@
                 <span id="mqttStatusText">–</span>
             </div>
             <a href="/vehicles" class="btn-back">← Vissza</a>
+            <button class="btn btn-primary" id="saveBtnTop" onclick="saveConfig()" style="padding: 8px 16px; font-size: 13px;">💾 Mentés</button>
+            <div class="toast" id="saveToastTop" style="position:absolute;top:60px;right:12px;z-index:200;"></div>
             <button class="btn-icon" id="themeToggle" type="button" title="Téma váltása">🌙</button>
         </div>
     </div>
@@ -546,6 +555,12 @@
             <input class="input" type="number" id="auto_refresh_interval" placeholder="30" min="5" max="3600">
             <div class="help">Minimum <strong>5 másodperc</strong>. Ajánlott: <strong>30</strong> normál használathoz, <strong>10</strong> aktív figyeléshez. Túl kis érték feleslegesen terheli a szervert.</div>
         </div>
+
+        <div class="field">
+            <label>Események száma oldalanként</label>
+            <input class="input" type="number" id="events_per_page" placeholder="100" min="10" max="1000">
+            <div class="help">Mennyi eseményt töltjön be egyszerre az eseménylistán. Kisebb szám = gyorsabb betöltés. Ajánlott: <strong>50–200</strong>. A többi esemény a „Több betöltése" gombbal érhető el.</div>
+        </div>
     </div>
 
     <!-- Kép tárolás -->
@@ -569,6 +584,7 @@
         </div>
 
         <div class="action-row" style="margin-top: 12px;">
+            <button class="btn btn-primary" onclick="saveConfig()">💾 Mentés</button>
             <button class="btn btn-secondary" id="cleanupBtn" onclick="runCleanup()">🧹 Azonnali takarítás</button>
             <div class="toast" id="cleanupToast"></div>
             <div id="storageInfo" style="font-size:13px;color:var(--muted);"></div>
@@ -846,6 +862,7 @@
     document.getElementById('mqtt_base_url').value = config.mqtt_base_url || '';
     document.getElementById('auto_refresh').checked = boolVal(config.auto_refresh);
     document.getElementById('auto_refresh_interval').value = config.auto_refresh_interval || '30';
+    document.getElementById('events_per_page').value = config.events_per_page || '100';
     document.getElementById('image_max_days').value = config.image_max_days || '0';
     document.getElementById('image_max_count').value = config.image_max_count || '0';
     document.getElementById('webhook_enabled').checked = boolVal(config.webhook_enabled);
@@ -884,6 +901,7 @@
             mqtt_base_url: document.getElementById('mqtt_base_url').value.trim(),
             auto_refresh: document.getElementById('auto_refresh').checked ? '1' : '0',
             auto_refresh_interval: document.getElementById('auto_refresh_interval').value.trim() || '30',
+            events_per_page: document.getElementById('events_per_page').value.trim() || '100',
             image_max_days: document.getElementById('image_max_days').value.trim() || '0',
             image_max_count: document.getElementById('image_max_count').value.trim() || '0',
             webhook_enabled: document.getElementById('webhook_enabled').checked ? '1' : '0',
@@ -900,8 +918,8 @@
 
     async function saveConfig() {
         const btn = document.getElementById('saveBtn');
-        btn.disabled = true;
-        btn.textContent = 'Mentés...';
+        const btnTop = document.getElementById('saveBtnTop');
+        [btn, btnTop].forEach(b => { if(b) { b.disabled = true; b.textContent = 'Mentés...'; } });
         try {
             const res = await fetch('/api/config', {
                 method: 'POST',
@@ -910,15 +928,17 @@
             });
             if (res.ok) {
                 showToast('saveToast', '✓ Beállítások mentve!', 'success');
+                showToast('saveToastTop', '✓ Mentve!', 'success');
                 checkMqttStatus();
             } else {
                 showToast('saveToast', '✗ Mentési hiba!', 'error');
+                showToast('saveToastTop', '✗ Mentési hiba!', 'error');
             }
         } catch (e) {
             showToast('saveToast', '✗ Hálózati hiba!', 'error');
+            showToast('saveToastTop', '✗ Hálózati hiba!', 'error');
         }
-        btn.disabled = false;
-        btn.textContent = '💾 Mentés';
+        [btn, btnTop].forEach(b => { if(b) { b.disabled = false; b.textContent = '💾 Mentés'; } });
     }
 
     async function testMqtt() {
