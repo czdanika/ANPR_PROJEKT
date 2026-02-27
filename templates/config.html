@@ -450,6 +450,10 @@
                 <div class="help">Az MQTT felhasználóhoz tartozó jelszó. Nyílt brokernél üresen hagyható.</div>
             </div>
         </div>
+        <div class="action-row" style="margin-top:16px;">
+            <button class="btn btn-primary" onclick="saveConfig()" style="padding:8px 18px;font-size:13px;">💾 Mentés</button>
+            <div class="toast" id="saveToastMqtt"></div>
+        </div>
     </div>
 
     <!-- Topik beállítások -->
@@ -494,6 +498,10 @@
                     <span class="slider"></span>
                 </label>
             </div>
+        </div>
+        <div class="action-row" style="margin-top:16px;">
+            <button class="btn btn-primary" onclick="saveConfig()" style="padding:8px 18px;font-size:13px;">💾 Mentés</button>
+            <div class="toast" id="saveToastTopik"></div>
         </div>
     </div>
 
@@ -636,6 +644,11 @@
             <div class="help">
                 Akkor aktiválódik, ha a kamera <em>nem ismert</em> rendszámot azonosít. Hasznos biztonsági riasztáshoz – pl. értesítés küldése HA-on keresztül, ha ismeretlen autó parkol be.
             </div>
+        </div>
+
+        <div class="action-row" style="margin-top:16px;">
+            <button class="btn btn-primary" onclick="saveConfig()" style="padding:8px 18px;font-size:13px;">💾 Mentés</button>
+            <div class="toast" id="saveToastWebhook"></div>
         </div>
     </div>
 
@@ -917,28 +930,23 @@
     }
 
     async function saveConfig() {
-        const btn = document.getElementById('saveBtn');
-        const btnTop = document.getElementById('saveBtnTop');
-        [btn, btnTop].forEach(b => { if(b) { b.disabled = true; b.textContent = 'Mentés...'; } });
+        const allBtns = document.querySelectorAll('[onclick="saveConfig()"]');
+        allBtns.forEach(b => { b.disabled = true; b.textContent = 'Mentés...'; });
+        const toastIds = ['saveToast', 'saveToastTop', 'saveToastMqtt', 'saveToastTopik', 'saveToastWebhook'];
         try {
             const res = await fetch('/api/config', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(getFormData())
             });
-            if (res.ok) {
-                showToast('saveToast', '✓ Beállítások mentve!', 'success');
-                showToast('saveToastTop', '✓ Mentve!', 'success');
-                checkMqttStatus();
-            } else {
-                showToast('saveToast', '✗ Mentési hiba!', 'error');
-                showToast('saveToastTop', '✗ Mentési hiba!', 'error');
-            }
+            const msg = res.ok ? '✓ Mentve!' : '✗ Mentési hiba!';
+            const type = res.ok ? 'success' : 'error';
+            toastIds.forEach(id => { if(document.getElementById(id)) showToast(id, msg, type); });
+            if (res.ok) checkMqttStatus();
         } catch (e) {
-            showToast('saveToast', '✗ Hálózati hiba!', 'error');
-            showToast('saveToastTop', '✗ Hálózati hiba!', 'error');
+            toastIds.forEach(id => { if(document.getElementById(id)) showToast(id, '✗ Hálózati hiba!', 'error'); });
         }
-        [btn, btnTop].forEach(b => { if(b) { b.disabled = false; b.textContent = '💾 Mentés'; } });
+        allBtns.forEach(b => { b.disabled = false; b.textContent = '💾 Mentés'; });
     }
 
     async function testMqtt() {
