@@ -600,6 +600,35 @@ def serve_image(filename):
     return send_from_directory(IMAGE_SAVE_PATH, filename)
 
 
+@app.route('/api/snapshot')
+@auth.login_required
+def latest_snapshot():
+    """Returns the latest camera image as JPEG. Used by HA generic camera.
+    Optional ?ip=<camera_ip> to filter by specific camera."""
+    camera_ip = request.args.get('ip', '').strip()
+    try:
+        conn = sqlite3.connect(DATABASE_FILE)
+        cursor = conn.cursor()
+        if camera_ip:
+            cursor.execute(
+                "SELECT image_path FROM anpr_events WHERE image_path != '' AND ip_address = ? ORDER BY timestamp DESC LIMIT 1",
+                (camera_ip,)
+            )
+        else:
+            cursor.execute(
+                "SELECT image_path FROM anpr_events WHERE image_path != '' ORDER BY timestamp DESC LIMIT 1"
+            )
+        row = cursor.fetchone()
+        conn.close()
+        if not row or not row[0]:
+            return "Nincs elérhető kép", 404
+        filename = os.path.basename(row[0])
+        return send_from_directory(IMAGE_SAVE_PATH, filename)
+    except Exception as e:
+        log_with_timestamp(f"Snapshot hiba: {e}")
+        return "Szerver hiba", 500
+
+
 @app.route('/api/event', methods=['POST'])
 def receive_event():
     log_with_timestamp("Bejövő esemény...")

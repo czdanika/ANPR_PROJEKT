@@ -726,11 +726,22 @@
             Másold be az alábbi YAML-t a Home Assistant konfigurációjába. A generált kód mindig a jelenlegi beállításaidat tükrözi — ha változtatsz valamit fentebb, mentés után frissül.
         </div>
 
+        <!-- Snapshot URL box -->
+        <div style="background:rgba(91,124,250,0.07);border:1px solid rgba(91,124,250,0.25);border-radius:12px;padding:14px 16px;margin-bottom:18px;">
+            <div style="font-size:12px;font-weight:600;color:var(--accent-strong);margin-bottom:8px;">📷 Kamera snapshot URL (mindig az utolsó kép)</div>
+            <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
+                <code id="snapshotUrlDisplay" style="font-family:'IBM Plex Mono',monospace;font-size:12px;background:rgba(0,0,0,0.08);padding:6px 10px;border-radius:7px;flex:1;word-break:break-all;"></code>
+                <button onclick="copySnapshotUrl()" class="copy-btn" id="snapshotCopyBtn" style="white-space:nowrap;">📋 Másolás</button>
+            </div>
+            <div style="font-size:11px;color:var(--muted);margin-top:6px;">Per-kamera: URL + <code>?ip=192.168.0.x</code> — Auth: admin / beállított jelszó</div>
+        </div>
+
         <div class="ha-tabs">
             <button class="ha-tab active" onclick="showHaTab('mqtt', this)">MQTT szenzor</button>
             <button class="ha-tab" onclick="showHaTab('rest', this)">REST szenzor</button>
             <button class="ha-tab" onclick="showHaTab('webhook', this)">Webhook automáció</button>
             <button class="ha-tab" onclick="showHaTab('dashboard', this)">Dashboard kártya</button>
+            <button class="ha-tab" onclick="showHaTab('camera', this)">📷 Kamera stream</button>
         </div>
 
         <pre class="yaml-block" id="haYamlOutput"></pre>
@@ -1150,6 +1161,7 @@
         rest: 'Másold be a <code>configuration.yaml</code> fájlba. A HA 30 másodpercenként lekérdezi az ANPR szervert.',
         webhook: 'Másold be az <code>automations.yaml</code> fájlba, vagy importáld az Automatizálások szerkesztőből. Az ANPR szerver hívja meg HA-t.',
         dashboard: 'Lovelace szerkesztőben → Kártya hozzáadása → Manuális (YAML nézet) → illeszd be.',
+        camera: 'Másold be a <code>configuration.yaml</code> fájlba. HA-ban a <strong>Beállítások → Eszközök → Kamerák</strong> alatt jelenik meg. A snapshot URL mindig az <em>utolsó felismert kép</em>et adja vissza.',
     };
 
     function getHaConfig() {
@@ -1282,6 +1294,47 @@ rest:
         message: "{{ trigger.json.license_plate }} észlelve"`;
     }
 
+    function generateCameraYaml(c) {
+        return `# configuration.yaml — Generic kamera (utolsó ANPR kép)
+# A snapshot URL mindig a legutóbbi kameraképet adja vissza.
+# HA-ban: Beállítások → Eszközök és szolgáltatások → Kamerák
+
+camera:
+  - platform: generic
+    name: "ANPR – Utolsó kamerakép"
+    still_image_url: "${c.base_url}/api/snapshot"
+    username: admin
+    password: !secret anpr_password
+    verify_ssl: false
+    scan_interval: 10   # frissítési időköz másodpercben
+
+# Ha több kamerád van, minden kamerához külön:
+# camera:
+#   - platform: generic
+#     name: "ANPR – Bejárati kapu"
+#     still_image_url: "${c.base_url}/api/snapshot?ip=192.168.0.101"
+#     username: admin
+#     password: !secret anpr_password
+#     verify_ssl: false
+#
+#   - platform: generic
+#     name: "ANPR – Garázs"
+#     still_image_url: "${c.base_url}/api/snapshot?ip=192.168.0.102"
+#     username: admin
+#     password: !secret anpr_password
+#     verify_ssl: false
+
+# secrets.yaml-ba add hozzá:
+# anpr_password: "password123"
+
+# --- Dashboard kártya a képhez ---
+# type: picture-entity
+# entity: sensor.anpr_utolso_rendszam
+# camera_image: camera.anpr_utolso_kamerakep
+# show_state: true
+# show_name: true`;
+    }
+
     function generateDashboardYaml(c) {
         return `# Lovelace kártya — Kártya hozzáadása → Manuális
 
@@ -1332,6 +1385,7 @@ cards:
         rest: generateRestYaml,
         webhook: generateWebhookYaml,
         dashboard: generateDashboardYaml,
+        camera: generateCameraYaml,
     };
 
     function showHaTab(tab, btn) {
@@ -1357,6 +1411,26 @@ cards:
 
     // Init HA tab
     showHaTab('mqtt', document.querySelector('.ha-tab.active'));
+
+    // Snapshot URL megjelenítése
+    function updateSnapshotUrl() {
+        const baseUrl = (document.getElementById('mqtt_base_url').value.trim() || 'http://192.168.0.136:5555').replace(/\/$/, '');
+        const url = baseUrl + '/api/snapshot';
+        const el = document.getElementById('snapshotUrlDisplay');
+        if (el) el.textContent = url;
+    }
+    updateSnapshotUrl();
+    document.getElementById('mqtt_base_url').addEventListener('input', updateSnapshotUrl);
+
+    function copySnapshotUrl() {
+        const url = document.getElementById('snapshotUrlDisplay').textContent;
+        navigator.clipboard.writeText(url).then(() => {
+            const btn = document.getElementById('snapshotCopyBtn');
+            btn.textContent = '✓ Másolva!';
+            btn.classList.add('copied');
+            setTimeout(() => { btn.textContent = '📋 Másolás'; btn.classList.remove('copied'); }, 2000);
+        });
+    }
 
     async function runCleanup() {
         const btn = document.getElementById('cleanupBtn');
