@@ -1,0 +1,17 @@
+# Adatfájlok – NEM kerülnek git-be
+vehicles.db
+received_images/
+
+# Jelszavak és konfiguráció
+.env
+
+# Python
+*.pyc
+__pycache__/
+*.log
+
+# macOS
+.DS_Store
+
+# IDE / Claude
+.claude/
