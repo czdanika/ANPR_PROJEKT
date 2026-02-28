@@ -503,7 +503,9 @@
             </div>
             <div class="action-row" style="margin-top:14px;">
                 <button class="btn btn-primary" onclick="saveConfig()" style="padding:7px 16px;font-size:13px;">Mentés</button>
+                <button class="btn btn-secondary" id="testBtn" onclick="testMqtt()" style="padding:7px 16px;font-size:13px;">MQTT kapcsolat tesztelése</button>
                 <div class="toast" id="saveToastMqtt"></div>
+                <div class="toast" id="testToast"></div>
             </div>
         </div>
 
@@ -833,12 +835,10 @@
             </div>
         </div>
 
-        <!-- Mentés + MQTT teszt -->
+        <!-- Mentés -->
         <div class="action-row">
             <button class="btn btn-primary" id="saveBtn" onclick="saveConfig()">Mentés</button>
-            <button class="btn btn-secondary" id="testBtn" onclick="testMqtt()">MQTT kapcsolat tesztelése</button>
             <div class="toast" id="saveToast"></div>
-            <div class="toast" id="testToast"></div>
         </div>
 
         <!-- Home Assistant konfiguráció -->
@@ -849,13 +849,26 @@
             </div>
 
             <!-- Snapshot URL -->
-            <div style="background:rgba(91,124,250,0.07);border:1px solid rgba(91,124,250,0.22);border-radius:10px;padding:12px 14px;margin-bottom:16px;">
-                <div style="font-size:11px;font-weight:700;color:var(--accent-strong);margin-bottom:7px;text-transform:uppercase;letter-spacing:0.06em;">Kamera snapshot URL</div>
+            <div style="background:rgba(91,124,250,0.07);border:1px solid rgba(91,124,250,0.22);border-radius:10px;padding:12px 14px;margin-bottom:12px;">
+                <div style="font-size:11px;font-weight:700;color:var(--accent-strong);margin-bottom:7px;text-transform:uppercase;letter-spacing:0.06em;">Kamera snapshot URL (utolsó kép, mindig friss)</div>
                 <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
                     <code id="snapshotUrlDisplay" style="font-family:'IBM Plex Mono',monospace;font-size:11px;background:rgba(0,0,0,0.08);padding:5px 9px;border-radius:6px;flex:1;word-break:break-all;"></code>
                     <button onclick="copySnapshotUrl()" class="copy-btn" id="snapshotCopyBtn" style="white-space:nowrap;margin-top:0;">Másolás</button>
                 </div>
-                <div style="font-size:11px;color:var(--muted);margin-top:5px;">Per-kamera: URL + <code>?ip=192.168.0.x</code></div>
+                <div style="font-size:11px;color:var(--muted);margin-top:5px;">Per-kamera szűrés: URL + <code>?ip=192.168.0.x</code></div>
+            </div>
+
+            <!-- Latest kép URL -->
+            <div style="background:rgba(91,124,250,0.07);border:1px solid rgba(91,124,250,0.22);border-radius:10px;padding:12px 14px;margin-bottom:16px;">
+                <div style="font-size:11px;font-weight:700;color:var(--accent-strong);margin-bottom:7px;text-transform:uppercase;letter-spacing:0.06em;">Statikus kép URL – latest.jpg (HA Generic Camera)</div>
+                <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
+                    <code id="latestJpgUrlDisplay" style="font-family:'IBM Plex Mono',monospace;font-size:11px;background:rgba(0,0,0,0.08);padding:5px 9px;border-radius:6px;flex:1;word-break:break-all;"></code>
+                    <button onclick="copyLatestUrl()" class="copy-btn" id="latestCopyBtn" style="white-space:nowrap;margin-top:0;">Másolás</button>
+                </div>
+                <div style="font-size:11px;color:var(--muted);margin-top:5px;">
+                    Minden beérkező kameraképnél automatikusan frissül. Jelszó nélkül elérhető.<br>
+                    HA YAML: <code>still_image_url: &lt;fenti URL&gt;</code>
+                </div>
             </div>
 
             <div class="ha-tabs">
@@ -942,6 +955,22 @@
                 <button class="btn btn-primary" onclick="addCamera()">+ Hozzáad</button>
             </div>
             <div class="toast" id="cameraToast" style="margin-top:10px;"></div>
+        </div>
+
+        <!-- Beállítások Export / Import -->
+        <div class="section" style="margin-top:20px;">
+            <div class="section-title">Beállítások exportálása / importálása</div>
+            <div class="help" style="margin-bottom:14px;">
+                Exportáld a jelenlegi beállításokat JSON fájlba, vagy tölts be egy korábban mentett konfigurációt.
+            </div>
+            <div style="display:flex;gap:10px;flex-wrap:wrap;">
+                <button class="btn btn-secondary" onclick="exportConfig()">Export – JSON letöltése</button>
+                <label class="btn btn-secondary" style="cursor:pointer;margin:0;">
+                    Import – JSON betöltése
+                    <input type="file" accept=".json" style="display:none;" onchange="importConfig(event)">
+                </label>
+            </div>
+            <div class="toast" id="importToast" style="margin-top:10px;"></div>
         </div>
 
         <!-- Ismert rendszámok -->
@@ -1563,6 +1592,8 @@ cards:
         const baseUrl = (document.getElementById('mqtt_base_url').value.trim() || 'http://192.168.0.136:5555').replace(/\/$/, '');
         const el = document.getElementById('snapshotUrlDisplay');
         if (el) el.textContent = baseUrl + '/api/snapshot';
+        const el2 = document.getElementById('latestJpgUrlDisplay');
+        if (el2) el2.textContent = baseUrl + '/received_images/latest.jpg';
     }
     updateSnapshotUrl();
     document.getElementById('mqtt_base_url').addEventListener('input', updateSnapshotUrl);
@@ -1575,6 +1606,50 @@ cards:
             btn.classList.add('copied');
             setTimeout(() => { btn.textContent = 'Másolás'; btn.classList.remove('copied'); }, 2000);
         });
+    }
+
+    function copyLatestUrl() {
+        const url = document.getElementById('latestJpgUrlDisplay').textContent;
+        navigator.clipboard.writeText(url).then(() => {
+            const btn = document.getElementById('latestCopyBtn');
+            btn.textContent = 'Másolva!';
+            btn.classList.add('copied');
+            setTimeout(() => { btn.textContent = 'Másolás'; btn.classList.remove('copied'); }, 2000);
+        });
+    }
+
+    // ── Export / Import ────────────────────────────────────────────────────────
+    async function exportConfig() {
+        const res = await fetch('/api/config');
+        const data = await res.json();
+        const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+        const a = document.createElement('a');
+        a.href = URL.createObjectURL(blob);
+        a.download = 'anpr_config.json';
+        a.click();
+    }
+
+    async function importConfig(event) {
+        const file = event.target.files[0];
+        if (!file) return;
+        try {
+            const text = await file.text();
+            const data = JSON.parse(text);
+            const res = await fetch('/api/config', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(data)
+            });
+            if (res.ok) {
+                showToast('importToast', 'Konfiguráció sikeresen betöltve!', 'success');
+                loadConfig();
+            } else {
+                showToast('importToast', 'Import hiba!', 'error');
+            }
+        } catch(e) {
+            showToast('importToast', 'Érvénytelen JSON fájl!', 'error');
+        }
+        event.target.value = '';
     }
 
     // ── Cleanup ────────────────────────────────────────────────────────────────
