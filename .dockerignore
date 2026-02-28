@@ -1,0 +1,15 @@
+# Adatfájlok – ne kerüljenek az image-be, csak a Pi-n élnek
+vehicles.db
+received_images/
+
+# Git és fejlesztői fájlok
+.git/
+.claude/
+.gitignore
+*.pyc
+__pycache__/
+*.log
+
+# Fejlesztői docker fájlok
+docker-compose.yml
+docker-compose.*.yml

@@ -1,11 +1,11 @@
-version: "3.8"
 services:
   anpr:
-    build: .
+    image: czdanika/anpr-projekt:latest
     ports:
       - "${ANPR_PORT:-5555}:${ANPR_PORT:-5555}"
     volumes:
-      - .:/app
+      - ./anpr-data/vehicles.db:/app/vehicles.db
+      - ./anpr-data/received_images:/app/received_images
     restart: unless-stopped
     environment:
       - ANPR_PORT=${ANPR_PORT:-5555}

@@ -2,9 +2,13 @@ FROM python:3.11-slim
 
 WORKDIR /app
 
-COPY . /app
+# Adatkönyvtárak előre létrehozva (volume mount ide kerül)
+RUN mkdir -p /app/received_images
 
-RUN pip install --no-cache-dir flask flask_httpauth paho-mqtt
+COPY requirements.txt /app/requirements.txt
+RUN pip install --no-cache-dir -r requirements.txt
+
+COPY . /app
 
 EXPOSE 5555
 
