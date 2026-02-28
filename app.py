@@ -1,4 +1,4 @@
-from flask import Flask, request, render_template, send_from_directory, jsonify
+from flask import Flask, request, render_template, send_from_directory, jsonify, Response, stream_with_context
 from flask_httpauth import HTTPBasicAuth
 import os
 import sqlite3
@@ -6,6 +6,11 @@ import xml.etree.ElementTree as ET
 import json
 import threading
 import urllib.request
+import queue
+import smtplib
+from email.mime.text import MIMEText
+from email.mime.multipart import MIMEMultipart
+from email.mime.image import MIMEImage
 from datetime import datetime, timedelta
 
 try:
@@ -32,6 +37,23 @@ users = {
 mqtt_client = None
 mqtt_connected = False
 mqtt_lock = threading.Lock()
+
+# SSE (Server-Sent Events) – valós idejű értesítések a böngészőbe
+_sse_listeners = []
+_sse_lock = threading.Lock()
+
+def push_sse_event(data: dict):
+    """Push egy eseményt az összes csatlakozott SSE kliensnek."""
+    msg = json.dumps(data, ensure_ascii=False)
+    with _sse_lock:
+        dead = []
+        for q in _sse_listeners:
+            try:
+                q.put_nowait(msg)
+            except queue.Full:
+                dead.append(q)
+        for q in dead:
+            _sse_listeners.remove(q)
 
 
 @auth.verify_password
@@ -127,6 +149,15 @@ def initialize_database():
             'relay_method': 'GET',
             'relay_body': '{"id":0,"on":true}',
             'relay_trigger_on': 'arrival',
+            'email_enabled': '0',
+            'email_smtp_host': '',
+            'email_smtp_port': '587',
+            'email_smtp_user': '',
+            'email_smtp_password': '',
+            'email_from': '',
+            'email_to': '',
+            'email_trigger': 'unknown',
+            'email_attach_image': '1',
         }
         for key, value in defaults.items():
             cursor.execute('INSERT OR IGNORE INTO mqtt_config (key, value) VALUES (?, ?)', (key, value))
@@ -340,6 +371,90 @@ def trigger_relay_if_needed(event_data, friendly_name):
     if _should_trigger(direction, get_config('relay_trigger_on', 'arrival')):
         _fire_relay(url, (get_config('relay_method', 'GET') or 'GET').upper(),
                     (get_config('relay_body', '') or '').strip() or '{}')
+
+
+def send_email_notification(event_data, friendly_name):
+    """E-mail értesítés küldése rendszám észleléskor."""
+    if get_config('email_enabled', '0') != '1':
+        return
+    smtp_host = (get_config('email_smtp_host', '') or '').strip()
+    if not smtp_host:
+        return
+    smtp_port = int(get_config('email_smtp_port', '587') or 587)
+    smtp_user = (get_config('email_smtp_user', '') or '').strip()
+    smtp_pass = (get_config('email_smtp_password', '') or '').strip()
+    from_addr = (get_config('email_from', '') or smtp_user).strip()
+    to_raw = (get_config('email_to', '') or '').strip()
+    to_addrs = [a.strip() for a in to_raw.split(',') if a.strip()]
+    if not to_addrs:
+        return
+    trigger = get_config('email_trigger', 'unknown')
+    attach_image = get_config('email_attach_image', '1') == '1'
+
+    plate = (event_data.get('license_plate') or 'Unknown').upper()
+    is_known = friendly_name is not None
+
+    if trigger == 'unknown' and is_known:
+        return
+    if trigger == 'known' and not is_known:
+        return
+
+    def _send():
+        try:
+            status_text = f'✅ Ismert – {friendly_name}' if is_known else '⚠️ Ismeretlen rendszám'
+            base_url = (get_config('mqtt_base_url', '') or '').rstrip('/')
+            image_path = event_data.get('image_path', '')
+            image_url = f"{base_url}{image_path}" if image_path and base_url else ''
+            now_str = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+
+            subject = f"ANPR: {plate} – {status_text}"
+
+            html = f"""<!DOCTYPE html>
+<html><body style="font-family:Arial,sans-serif;max-width:480px;margin:0 auto;color:#222;">
+<h2 style="color:#2d4df4;">🚗 ANPR Értesítés</h2>
+<table style="width:100%;border-collapse:collapse;">
+  <tr><td style="padding:6px 10px;font-weight:bold;">Rendszám</td><td style="padding:6px 10px;font-family:monospace;font-size:1.1em;">{plate}</td></tr>
+  <tr style="background:#f4f4f4;"><td style="padding:6px 10px;font-weight:bold;">Státusz</td><td style="padding:6px 10px;">{status_text}</td></tr>
+  <tr><td style="padding:6px 10px;font-weight:bold;">Irány</td><td style="padding:6px 10px;">{event_data.get('vehicle_direction','–')}</td></tr>
+  <tr style="background:#f4f4f4;"><td style="padding:6px 10px;font-weight:bold;">Jármű típusa</td><td style="padding:6px 10px;">{event_data.get('vehicle_type','–')}</td></tr>
+  <tr><td style="padding:6px 10px;font-weight:bold;">Szín</td><td style="padding:6px 10px;">{event_data.get('vehicle_color','–')}</td></tr>
+  <tr style="background:#f4f4f4;"><td style="padding:6px 10px;font-weight:bold;">Kamera IP</td><td style="padding:6px 10px;">{event_data.get('ip_address','–')}</td></tr>
+  <tr><td style="padding:6px 10px;font-weight:bold;">Időpont</td><td style="padding:6px 10px;">{now_str}</td></tr>
+</table>
+{f'<p><img src="{image_url}" style="max-width:400px;border-radius:8px;margin-top:12px;"></p>' if image_url else ''}
+<p style="margin-top:20px;font-size:12px;color:#888;">Küldve: ANPR Projekt – <a href="{base_url}">{base_url}</a></p>
+</body></html>"""
+
+            msg = MIMEMultipart('related')
+            msg['Subject'] = subject
+            msg['From'] = from_addr
+            msg['To'] = ', '.join(to_addrs)
+            msg_alt = MIMEMultipart('alternative')
+            msg_alt.attach(MIMEText(html, 'html', 'utf-8'))
+            msg.attach(msg_alt)
+
+            if attach_image and image_path:
+                full_path = '.' + image_path
+                if os.path.exists(full_path):
+                    with open(full_path, 'rb') as f:
+                        img_data = f.read()
+                    img = MIMEImage(img_data)
+                    img.add_header('Content-Disposition', 'attachment',
+                                   filename=os.path.basename(image_path))
+                    msg.attach(img)
+
+            with smtplib.SMTP(smtp_host, smtp_port, timeout=10) as srv:
+                srv.ehlo()
+                srv.starttls()
+                srv.ehlo()
+                if smtp_user and smtp_pass:
+                    srv.login(smtp_user, smtp_pass)
+                srv.sendmail(from_addr, to_addrs, msg.as_string())
+            log_with_timestamp(f"Email elküldve: {plate} → {', '.join(to_addrs)}")
+        except Exception as e:
+            log_with_timestamp(f"Email hiba: {e}")
+
+    threading.Thread(target=_send, daemon=True).start()
 
 
 def cleanup_images():
@@ -679,7 +794,23 @@ def receive_event():
             friendly = get_friendly_name(event_data.get('license_plate', ''))
             trigger_webhooks(event_data, friendly)
             trigger_relay_if_needed(event_data, friendly)
+            send_email_notification(event_data, friendly)
             cleanup_images()
+            # SSE – push valós időben a böngészőkbe
+            base_url = (get_config('mqtt_base_url', '') or '').rstrip('/')
+            image_path = event_data.get('image_path', '')
+            push_sse_event({
+                'license_plate': (event_data.get('license_plate') or '').upper(),
+                'type': event_data.get('vehicle_type', ''),
+                'color': event_data.get('vehicle_color', ''),
+                'direction': event_data.get('vehicle_direction', ''),
+                'timestamp': datetime.now().strftime('%Y-%m-%d %H:%M:%S'),
+                'confidence': event_data.get('confidence_level', ''),
+                'image': image_path,
+                'ip_address': event_data.get('ip_address', ''),
+                'known': friendly is not None,
+                'friendly_name': friendly or '',
+            })
             log_with_timestamp(f"Esemény feldolgozva: {event_data['license_plate']}")
             return "ANPR esemény sikeresen feldolgozva!", 200
         except Exception as e:
@@ -929,6 +1060,157 @@ def delete_camera_api(camera_id):
 @auth.login_required
 def protected():
     return jsonify({"message": f"Hello, {auth.current_user()}! Ez egy védett oldal."})
+
+
+# ─── SSE ──────────────────────────────────────────────────────────────────────
+
+@app.route('/api/events/stream')
+@auth.login_required
+def event_stream():
+    """Server-Sent Events stream – valós idejű esemény push a böngészőbe."""
+    q = queue.Queue(maxsize=20)
+    with _sse_lock:
+        _sse_listeners.append(q)
+
+    def generate():
+        try:
+            while True:
+                try:
+                    msg = q.get(timeout=25)
+                    yield f"data: {msg}\n\n"
+                except queue.Empty:
+                    yield ": heartbeat\n\n"  # kapcsolat életben tartása
+        except GeneratorExit:
+            pass
+        finally:
+            with _sse_lock:
+                try:
+                    _sse_listeners.remove(q)
+                except ValueError:
+                    pass
+
+    return Response(
+        stream_with_context(generate()),
+        mimetype='text/event-stream',
+        headers={
+            'Cache-Control': 'no-cache',
+            'X-Accel-Buffering': 'no',
+            'Connection': 'keep-alive',
+        }
+    )
+
+
+# ─── Email teszt ──────────────────────────────────────────────────────────────
+
+@app.route('/api/email/test', methods=['POST'])
+@auth.login_required
+def test_email():
+    data = request.get_json() or {}
+    for key, value in data.items():
+        if key.startswith('email_'):
+            set_config(key, str(value))
+    dummy = {
+        'license_plate': 'TEST-001',
+        'vehicle_type': 'car',
+        'vehicle_color': 'white',
+        'vehicle_direction': 'forward',
+        'confidence_level': '99',
+        'ip_address': '192.168.0.test',
+        'image_path': '',
+    }
+    try:
+        # Teszt esetén minden trigger-t felülbírálunk
+        orig = get_config('email_trigger', 'unknown')
+        set_config('email_trigger', 'all')
+        send_email_notification(dummy, None)
+        set_config('email_trigger', orig)
+        return jsonify({'status': 'ok', 'message': 'Teszt email elküldve (ha a beállítások helyesek)!'})
+    except Exception as e:
+        return jsonify({'status': 'error', 'message': str(e)}), 500
+
+
+# ─── Statisztika ──────────────────────────────────────────────────────────────
+
+@app.route('/stats')
+@auth.login_required
+def stats_page():
+    return render_template('stats.html')
+
+
+@app.route('/api/stats')
+@auth.login_required
+def stats_api():
+    try:
+        conn = sqlite3.connect(DATABASE_FILE)
+        cursor = conn.cursor()
+        now = datetime.now()
+        today = now.strftime('%Y-%m-%d')
+        week_start = (now - timedelta(days=7)).strftime('%Y-%m-%d %H:%M:%S')
+        month_start = (now - timedelta(days=30)).strftime('%Y-%m-%d %H:%M:%S')
+
+        cursor.execute("SELECT COUNT(*) FROM anpr_events WHERE timestamp >= ?", (today + ' 00:00:00',))
+        today_count = cursor.fetchone()[0]
+
+        cursor.execute("SELECT COUNT(*) FROM anpr_events WHERE timestamp >= ?", (week_start,))
+        week_count = cursor.fetchone()[0]
+
+        cursor.execute("SELECT COUNT(*) FROM anpr_events")
+        total_count = cursor.fetchone()[0]
+
+        cursor.execute("""
+            SELECT COUNT(*) FROM anpr_events e
+            WHERE EXISTS (SELECT 1 FROM known_plates kp WHERE kp.license_plate = UPPER(e.license_plate))
+        """)
+        known_count = cursor.fetchone()[0]
+
+        # Óránkénti eloszlás (utolsó 7 nap)
+        cursor.execute("""
+            SELECT strftime('%H', timestamp) as h, COUNT(*) as cnt
+            FROM anpr_events WHERE timestamp >= ?
+            GROUP BY h ORDER BY h
+        """, (week_start,))
+        hourly = {str(i).zfill(2): 0 for i in range(24)}
+        for row in cursor.fetchall():
+            hourly[row[0]] = row[1]
+
+        # Napi események (utolsó 30 nap)
+        cursor.execute("""
+            SELECT strftime('%Y-%m-%d', timestamp) as day, COUNT(*) as cnt
+            FROM anpr_events WHERE timestamp >= ?
+            GROUP BY day ORDER BY day
+        """, (month_start,))
+        daily_rows = cursor.fetchall()
+
+        # Top 10 rendszám
+        cursor.execute("""
+            SELECT license_plate, COUNT(*) as cnt
+            FROM anpr_events GROUP BY license_plate
+            ORDER BY cnt DESC LIMIT 10
+        """)
+        top_plates = [{'plate': r[0], 'count': r[1]} for r in cursor.fetchall()]
+
+        # Kameránkénti bontás
+        cursor.execute("""
+            SELECT ip_address, COUNT(*) as cnt
+            FROM anpr_events GROUP BY ip_address
+            ORDER BY cnt DESC
+        """)
+        per_camera = [{'ip': r[0] or '–', 'count': r[1]} for r in cursor.fetchall()]
+
+        conn.close()
+        return jsonify({
+            'today': today_count,
+            'week': week_count,
+            'total': total_count,
+            'known': known_count,
+            'unknown': total_count - known_count,
+            'hourly': [hourly[str(i).zfill(2)] for i in range(24)],
+            'daily': {r[0]: r[1] for r in daily_rows},
+            'top_plates': top_plates,
+            'per_camera': per_camera,
+        })
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
 
 
 if __name__ == "__main__":
