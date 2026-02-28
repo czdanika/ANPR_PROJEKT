@@ -31,7 +31,9 @@ ANPR szerver (Flask, :5555)
       ├─► Képek mentése (/received_images/)
       ├─► MQTT publish → Home Assistant
       ├─► Webhook POST → HA / egyéb
-      └─► Relé HTTP trigger → Shelly kapu
+      ├─► Relé HTTP trigger → Shelly kapu
+      ├─► E-mail értesítés (SMTP/Gmail)
+      └─► SSE push → böngésző (valós idejű lista)
 ```
 
 1. A **Hikvision kamera** rendszámfelismerés esetén HTTP POST kérést küld a `/api/event` végpontra (XML formátumban).
@@ -58,6 +60,10 @@ ANPR szerver (Flask, :5555)
 | **Automatikus frissítés** | Configolható időközönként újratölti az oldalt |
 | **Képtakarítás** | Automatikus törlés kor és/vagy darabszám limit alapján |
 | **Sötét/világos téma** | Rendszer-téma detektálás + manuális váltás |
+| **Valós idejű frissítés (SSE)** | Új esemény azonnal megjelenik a listában (zöld/piros highlight), oldal-újratöltés nélkül |
+| **E-mail értesítés** | SMTP/Gmail alapú értesítés rendszám észleléskor, képmelléklettel, trigger beállítással |
+| **Statisztika dashboard** | Napi/heti trend, óránkénti eloszlás, ismert/ismeretlen arány, Top 10 rendszám, kameránkénti bontás |
+| **Kamera snapshot URL** | `/api/snapshot` – mindig az utolsó kép, HA generic camera integrációhoz |
 
 ---
 
@@ -255,6 +261,9 @@ Minden végpont **HTTP Basic Auth** hitelesítést igényel.
 | `GET` | `/api/latest` | Utolsó N esemény. Paraméter: `?count=5` (max 100) |
 | `DELETE` | `/api/events/<id>` | Egy esemény törlése |
 | `POST` | `/api/events/cleanup` | Azonnali képtakarítás a konfig szerint |
+| `GET` | `/api/events/stream` | SSE stream – valós idejű push (EventSource) |
+| `GET` | `/api/snapshot` | Utolsó kamerakép JPEG-ben. `?ip=<camera_ip>` per-kamera szűrés |
+| `GET` | `/api/stats` | Statisztika: napi/heti/top rendszámok/óránkénti eloszlás |
 
 ### Konfiguráció
 
@@ -264,6 +273,7 @@ Minden végpont **HTTP Basic Auth** hitelesítést igényel.
 | `POST` | `/api/config` | Beállítások mentése (JSON body) |
 | `POST` | `/api/mqtt/test` | MQTT kapcsolat tesztelése |
 | `GET` | `/api/mqtt/status` | MQTT kapcsolat állapota |
+| `POST` | `/api/email/test` | Teszt e-mail küldése |
 
 ### Ismert rendszámok
 
