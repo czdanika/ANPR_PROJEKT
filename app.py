@@ -718,7 +718,6 @@ def serve_image(filename):
 
 
 @app.route('/api/snapshot')
-@auth.login_required
 def latest_snapshot():
     """Returns the latest camera image as JPEG. Used by HA generic camera.
     Optional ?ip=<camera_ip> to filter by specific camera."""
