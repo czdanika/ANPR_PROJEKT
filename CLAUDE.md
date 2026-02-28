@@ -1,5 +1,11 @@
 # ANPR Projekt – Claude konfiguráció
 
+## Architektúra
+
+- **Pi (192.168.0.136):** helyi teszt szerver – ide rsync-kel töltünk
+- **NAS (192.168.2.101):** éles szerver – GitHub main branch-ről frissül
+- **Kamera:** mindkét szerverre küld eseményeket (Pi = teszt, NAS = éles)
+
 ## Raspberry Pi deployment
 
 - **IP:** 192.168.0.136
