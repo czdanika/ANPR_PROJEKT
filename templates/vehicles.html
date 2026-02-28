@@ -3,37 +3,36 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ANPR - Események</title>
+    <title>ANPR – Jármű események</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;600&display=swap');
 
         :root {
-            color-scheme: light dark;
-            --bg: #f7f7f5;
-            --bg-soft: #fbfbfa;
-            --panel: rgba(255, 255, 255, 0.9);
-            --panel-strong: rgba(255, 255, 255, 0.98);
-            --border: rgba(15, 18, 26, 0.08);
-            --text: #111318;
+            --bg: #f0f2f5;
+            --bg-soft: #e8eaed;
+            --panel: #ffffff;
+            --panel-strong: #ffffff;
+            --border: rgba(15,18,26,0.08);
+            --text: #1a1d23;
             --muted: #5a6270;
             --accent: #5b7cfa;
             --accent-strong: #2d4df4;
             --danger: #d84c4c;
-            --shadow: 0 20px 60px rgba(17, 19, 24, 0.08);
+            --shadow: 0 2px 12px rgba(17,19,24,0.07);
         }
 
         .theme-dark {
             --bg: #0e1117;
             --bg-soft: #111622;
-            --panel: rgba(16, 20, 30, 0.78);
-            --panel-strong: rgba(16, 20, 30, 0.92);
-            --border: rgba(255, 255, 255, 0.08);
-            --text: #eef2f7;
-            --muted: #9aa3b2;
+            --panel: #161b24;
+            --panel-strong: #1a2030;
+            --border: rgba(255,255,255,0.08);
+            --text: #e6edf3;
+            --muted: #8b949e;
             --accent: #77a0ff;
             --accent-strong: #4b7cff;
             --danger: #ff7a7a;
-            --shadow: 0 20px 60px rgba(0, 0, 0, 0.35);
+            --shadow: 0 2px 12px rgba(0,0,0,0.3);
         }
 
         * { box-sizing: border-box; }
@@ -42,200 +41,390 @@
             margin: 0;
             color: var(--text);
             font-family: 'Manrope', sans-serif;
-            background: linear-gradient(180deg, var(--bg), var(--bg-soft));
+            background: var(--bg);
             min-height: 100vh;
-            transition: background 0.2s ease, color 0.2s ease;
+            display: flex;
+            transition: background 0.2s, color 0.2s;
         }
 
-        .page { max-width: 1200px; margin: 0 auto; padding: 32px 20px 80px; }
-        header { display: grid; gap: 18px; margin-bottom: 24px; }
-
-        .topbar {
-            display: flex; align-items: center;
-            justify-content: space-between; gap: 12px;
+        /* ── Sidebar ── */
+        .sidebar {
+            width: 220px;
+            min-height: 100vh;
+            background: #0d1117;
+            border-right: 1px solid rgba(255,255,255,0.06);
+            display: flex;
+            flex-direction: column;
+            position: fixed;
+            top: 0; left: 0;
+            z-index: 200;
+            transition: transform 0.28s ease;
         }
 
-        .title { display: flex; align-items: center; gap: 12px; }
+        .sidebar-brand {
+            display: flex;
+            align-items: center;
+            gap: 11px;
+            padding: 22px 18px 18px;
+            border-bottom: 1px solid rgba(255,255,255,0.06);
+        }
 
-        .badge {
+        .brand-mark {
+            width: 34px; height: 34px;
+            background: #5b7cfa;
+            border-radius: 9px;
+            display: flex; align-items: center; justify-content: center;
+            font-weight: 800; font-size: 15px; color: white;
             font-family: 'IBM Plex Mono', monospace;
-            padding: 6px 10px; border-radius: 999px;
-            background: rgba(91, 124, 250, 0.12);
-            border: 1px solid rgba(91, 124, 250, 0.35);
-            font-size: 12px; letter-spacing: 0.08em;
-            text-transform: uppercase; color: var(--accent-strong);
+            flex-shrink: 0;
         }
 
-        h1 { margin: 0; font-size: clamp(24px, 3vw, 34px); font-weight: 700; }
-
-        .toolbar { display: flex; align-items: center; gap: 10px; }
-
-        .toggle {
-            display: inline-flex; align-items: center; gap: 8px;
-            padding: 8px 12px; border-radius: 999px;
-            border: 1px solid var(--border); background: var(--panel);
-            color: var(--text); font-size: 12px; cursor: pointer;
+        .brand-title {
+            font-size: 14px; font-weight: 700; color: #e6edf3; line-height: 1.2;
         }
 
+        .brand-version {
+            font-size: 10px; color: #484f58;
+            font-family: 'IBM Plex Mono', monospace;
+            margin-top: 1px;
+        }
+
+        .sidebar-nav {
+            flex: 1;
+            padding: 10px 10px;
+            display: flex; flex-direction: column; gap: 2px;
+        }
+
+        .nav-item {
+            display: flex; align-items: center; gap: 10px;
+            padding: 9px 11px; border-radius: 8px;
+            color: rgba(139,148,158,0.9);
+            text-decoration: none;
+            font-size: 13px; font-weight: 500;
+            transition: all 0.15s;
+        }
+
+        .nav-item:hover { background: rgba(255,255,255,0.06); color: #c9d1d9; }
+        .nav-item.active { background: rgba(91,124,250,0.16); color: #7fa5ff; font-weight: 600; }
+        .nav-item svg { flex-shrink: 0; opacity: 0.75; }
+        .nav-item.active svg { opacity: 1; }
+
+        .sidebar-footer {
+            padding: 14px 12px;
+            border-top: 1px solid rgba(255,255,255,0.06);
+            display: flex; flex-direction: column; gap: 10px;
+        }
+
+        .status-bar {
+            display: flex; align-items: center; gap: 14px; padding: 0 2px;
+        }
+
+        .status-item {
+            display: flex; align-items: center; gap: 5px;
+            font-size: 11px; color: #6e7681;
+            font-family: 'IBM Plex Mono', monospace;
+        }
+
+        .status-dot {
+            width: 7px; height: 7px; border-radius: 50%;
+            background: #484f58;
+            transition: background 0.3s, box-shadow 0.3s;
+            flex-shrink: 0;
+        }
+
+        .theme-btn {
+            display: flex; align-items: center; gap: 7px;
+            padding: 7px 11px; border-radius: 7px;
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.08);
+            color: #8b949e; font-size: 12px; font-weight: 500;
+            cursor: pointer; font-family: inherit;
+            transition: all 0.15s; width: 100%;
+        }
+
+        .theme-btn:hover { background: rgba(255,255,255,0.09); color: #c9d1d9; }
+
+        /* ── Main content ── */
+        .main-content {
+            margin-left: 220px;
+            flex: 1; min-width: 0; min-height: 100vh;
+            display: flex; flex-direction: column;
+        }
+
+        .page-header {
+            padding: 28px 32px 0;
+        }
+
+        .page-title { margin: 0; font-size: clamp(20px, 2.5vw, 28px); font-weight: 700; }
+
+        .page { padding: 20px 32px 80px; }
+
+        /* ── Stat cards ── */
         .stats {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
             gap: 12px;
+            margin-top: 20px; margin-bottom: 20px;
         }
 
         .stat-card {
             background: var(--panel); border: 1px solid var(--border);
-            border-radius: 16px; padding: 14px 16px; box-shadow: var(--shadow);
+            border-radius: 14px; padding: 16px 18px; box-shadow: var(--shadow);
         }
 
-        .stat-label { color: var(--muted); font-size: 12px; text-transform: uppercase; letter-spacing: 0.08em; }
-        .stat-value { font-size: 22px; font-weight: 600; margin-top: 6px; }
+        .stat-label { color: var(--muted); font-size: 11px; text-transform: uppercase; letter-spacing: 0.08em; font-weight: 600; }
+        .stat-value { font-size: 22px; font-weight: 700; margin-top: 5px; font-family: 'IBM Plex Mono', monospace; }
 
+        /* ── Filters ── */
         .filters {
-            background: var(--panel-strong); border: 1px solid var(--border);
-            border-radius: 18px; padding: 18px; display: grid; gap: 14px; box-shadow: var(--shadow);
+            background: var(--panel); border: 1px solid var(--border);
+            border-radius: 16px; padding: 16px 18px;
+            display: grid; gap: 12px; box-shadow: var(--shadow);
         }
 
         .filter-row {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-            gap: 12px;
+            grid-template-columns: 2fr 1fr 1fr 1fr 1fr 1fr 1fr;
+            gap: 10px;
         }
 
         .input {
             background: transparent; color: var(--text);
-            border: 1px solid var(--border); border-radius: 12px;
-            padding: 10px 12px; font-size: 14px; outline: none;
-            transition: border 0.2s ease, box-shadow 0.2s ease;
+            border: 1px solid var(--border); border-radius: 10px;
+            padding: 9px 11px; font-size: 13px; outline: none;
+            transition: border 0.2s, box-shadow 0.2s;
             width: 100%; font-family: inherit;
         }
 
         .input:focus {
-            border-color: rgba(91, 124, 250, 0.6);
-            box-shadow: 0 0 0 3px rgba(91, 124, 250, 0.12);
+            border-color: rgba(91,124,250,0.55);
+            box-shadow: 0 0 0 3px rgba(91,124,250,0.1);
         }
 
-        .input::placeholder { color: rgba(90, 98, 112, 0.7); }
+        .input::placeholder { color: rgba(90,98,112,0.6); }
 
-        .chips { display: flex; flex-wrap: wrap; gap: 8px; }
+        .chips { display: flex; flex-wrap: wrap; gap: 7px; }
 
         .chip {
-            border-radius: 999px; padding: 6px 12px; font-size: 12px;
+            border-radius: 999px; padding: 5px 12px; font-size: 12px;
             border: 1px solid var(--border); color: var(--muted);
-            cursor: pointer; transition: all 0.2s ease; background: transparent;
+            cursor: pointer; transition: all 0.15s; background: transparent;
         }
 
         .chip.active {
-            background: rgba(91, 124, 250, 0.16);
-            color: var(--accent-strong);
-            border-color: rgba(91, 124, 250, 0.5);
+            background: rgba(91,124,250,0.14); color: var(--accent-strong);
+            border-color: rgba(91,124,250,0.45);
         }
 
+        /* ── Table ── */
         .table-wrap {
-            margin-top: 22px; background: var(--panel-strong);
-            border: 1px solid var(--border); border-radius: 20px;
+            margin-top: 16px; background: var(--panel);
+            border: 1px solid var(--border); border-radius: 16px;
             overflow: hidden; box-shadow: var(--shadow);
         }
 
         table { width: 100%; border-collapse: collapse; }
-        thead { background: rgba(91, 124, 250, 0.08); }
-        th, td { text-align: left; padding: 14px 16px; font-size: 14px; }
+        thead { background: rgba(91,124,250,0.06); }
+        th, td { text-align: left; padding: 13px 15px; font-size: 13px; }
 
         th {
             color: var(--muted); font-weight: 600; text-transform: uppercase;
-            font-size: 12px; letter-spacing: 0.08em; cursor: pointer; position: relative;
+            font-size: 11px; letter-spacing: 0.08em; cursor: pointer; position: relative;
         }
 
         th.no-sort { cursor: default; }
-        th.sorted-asc::after { content: "▴"; position: absolute; right: 12px; }
-        th.sorted-desc::after { content: "▾"; position: absolute; right: 12px; }
+        th.sorted-asc::after { content: "▴"; position: absolute; right: 10px; }
+        th.sorted-desc::after { content: "▾"; position: absolute; right: 10px; }
 
-        tbody tr { border-top: 1px solid var(--border); transition: background 0.2s ease; }
-        tbody tr:hover { background: rgba(91, 124, 250, 0.06); }
+        tbody tr { border-top: 1px solid var(--border); transition: background 0.15s; }
+        tbody tr:hover { background: rgba(91,124,250,0.04); }
 
         .plate {
             font-family: 'IBM Plex Mono', monospace;
-            font-size: 14px; font-weight: 600; color: var(--accent-strong);
+            font-size: 13px; font-weight: 600; color: var(--accent-strong);
         }
 
         .camera-badge {
             display: inline-block;
             font-family: 'IBM Plex Mono', monospace;
-            font-size: 11px; padding: 3px 8px; border-radius: 999px;
-            background: rgba(91, 124, 250, 0.1);
-            border: 1px solid rgba(91, 124, 250, 0.25);
+            font-size: 11px; padding: 2px 8px; border-radius: 999px;
+            background: rgba(91,124,250,0.1);
+            border: 1px solid rgba(91,124,250,0.22);
             color: var(--accent); white-space: nowrap;
         }
 
         .confidence { font-weight: 600; color: var(--danger); }
-
         .img-thumb {
-            width: 90px; border-radius: 10px; cursor: pointer;
-            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            width: 80px; border-radius: 8px; cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
         }
-
-        .img-thumb:hover { transform: scale(1.04); box-shadow: 0 10px 20px rgba(0,0,0,0.18); }
+        .img-thumb:hover { transform: scale(1.05); box-shadow: 0 8px 18px rgba(0,0,0,0.18); }
 
         .muted { color: var(--muted); }
-        .empty { padding: 40px 20px; text-align: center; color: var(--muted); }
+        .empty { padding: 40px 20px; text-align: center; color: var(--muted); font-size: 14px; }
 
         #imageModal {
-            display: none; position: fixed; z-index: 10;
+            display: none; position: fixed; z-index: 500;
             left: 0; top: 0; width: 100%; height: 100%;
-            background: rgba(10, 12, 18, 0.72); backdrop-filter: blur(6px);
+            background: rgba(10,12,18,0.75); backdrop-filter: blur(6px);
         }
 
         #modalContent { max-width: 860px; margin: 6% auto 0; padding: 12px; }
-        #modalContent img { width: 100%; border-radius: 18px; box-shadow: var(--shadow); }
-        #closeModal { position: absolute; top: 20px; right: 30px; color: var(--text); font-size: 38px; cursor: pointer; }
+        #modalContent img { width: 100%; border-radius: 16px; box-shadow: 0 20px 60px rgba(0,0,0,0.4); }
+        #closeModal { position: absolute; top: 20px; right: 28px; color: white; font-size: 36px; cursor: pointer; opacity: 0.8; }
+        #closeModal:hover { opacity: 1; }
 
-        @media (max-width: 720px) {
-            th, td { padding: 10px 12px; }
-            .img-thumb { width: 70px; }
+        /* ── Mobile header ── */
+        .mobile-header {
+            display: none; align-items: center; gap: 12px;
+            padding: 12px 16px;
+            background: #0d1117;
+            position: sticky; top: 0; z-index: 150;
+            border-bottom: 1px solid rgba(255,255,255,0.06);
+        }
+
+        .hamburger {
+            background: none; border: none; cursor: pointer;
+            color: #c9d1d9; padding: 4px;
+            display: flex; align-items: center; justify-content: center;
+        }
+
+        .mobile-brand { font-size: 14px; font-weight: 700; color: #e6edf3; }
+
+        .sidebar-overlay {
+            display: none; position: fixed; inset: 0;
+            background: rgba(0,0,0,0.55); z-index: 190;
+        }
+
+        @media (max-width: 900px) {
+            .filter-row { grid-template-columns: 1fr 1fr 1fr; }
+        }
+
+        @media (max-width: 768px) {
+            .sidebar { transform: translateX(-100%); }
+            .sidebar.open { transform: translateX(0); }
+            .sidebar-overlay.open { display: block; }
+            .mobile-header { display: flex; }
+            .main-content { margin-left: 0; }
+            .page-header { padding: 16px 16px 0; }
+            .page { padding: 12px 16px 60px; }
+        }
+
+        @media (max-width: 600px) {
             .filter-row { grid-template-columns: 1fr; }
+            th, td { padding: 10px 11px; }
+            .img-thumb { width: 60px; }
         }
     </style>
 </head>
 <body>
+
+<!-- Sidebar overlay (mobile) -->
+<div class="sidebar-overlay" id="sidebarOverlay" onclick="closeSidebar()"></div>
+
+<!-- Sidebar -->
+<aside class="sidebar" id="sidebar">
+    <div class="sidebar-brand">
+        <div class="brand-mark">A</div>
+        <div>
+            <div class="brand-title">ANPR</div>
+            <div class="brand-version">v{{ version }}</div>
+        </div>
+    </div>
+
+    <nav class="sidebar-nav">
+        <a href="/vehicles" class="nav-item active">
+            <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <line x1="8" y1="6" x2="21" y2="6"></line><line x1="8" y1="12" x2="21" y2="12"></line>
+                <line x1="8" y1="18" x2="21" y2="18"></line>
+                <circle cx="3.5" cy="6" r="1" fill="currentColor" stroke="none"></circle>
+                <circle cx="3.5" cy="12" r="1" fill="currentColor" stroke="none"></circle>
+                <circle cx="3.5" cy="18" r="1" fill="currentColor" stroke="none"></circle>
+            </svg>
+            <span>Események</span>
+        </a>
+        <a href="/stats" class="nav-item">
+            <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <line x1="18" y1="20" x2="18" y2="10"></line>
+                <line x1="12" y1="20" x2="12" y2="4"></line>
+                <line x1="6" y1="20" x2="6" y2="14"></line>
+                <line x1="2" y1="20" x2="22" y2="20"></line>
+            </svg>
+            <span>Statisztika</span>
+        </a>
+        <a href="/config" class="nav-item">
+            <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <circle cx="12" cy="12" r="3"></circle>
+                <path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"></path>
+            </svg>
+            <span>Beállítások</span>
+        </a>
+    </nav>
+
+    <div class="sidebar-footer">
+        <div class="status-bar">
+            <div class="status-item">
+                <div class="status-dot" id="mqttDot" title="MQTT státusz"></div>
+                <span>MQTT</span>
+            </div>
+            <div class="status-item">
+                <div class="status-dot" id="sseDot" title="Élő kapcsolat"></div>
+                <span>Élő</span>
+            </div>
+        </div>
+        <button class="theme-btn" id="themeToggle" type="button">
+            <svg id="themeIconMoon" width="13" height="13" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"></path>
+            </svg>
+            <svg id="themeIconSun" width="13" height="13" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" style="display:none">
+                <circle cx="12" cy="12" r="5"></circle>
+                <line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line>
+                <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                <line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line>
+                <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+            </svg>
+            <span id="themeLabel">Sötét mód</span>
+        </button>
+    </div>
+</aside>
+
+<!-- Mobile header -->
+<div class="mobile-header">
+    <button class="hamburger" id="menuToggle" onclick="openSidebar()">
+        <svg width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <line x1="3" y1="6" x2="21" y2="6"></line>
+            <line x1="3" y1="12" x2="21" y2="12"></line>
+            <line x1="3" y1="18" x2="21" y2="18"></line>
+        </svg>
+    </button>
+    <span class="mobile-brand">ANPR</span>
+</div>
+
+<!-- Main content -->
+<main class="main-content">
+    <div class="page-header">
+        <h1 class="page-title">Jármű események</h1>
+    </div>
+
     <div class="page">
-        <header>
-            <div class="topbar">
-                <div class="title">
-                    <span class="badge">ANPR</span>
-                    <div><h1>Jármű események</h1></div>
-                </div>
-                <div class="toolbar">
-                    <div id="mqttStatusBar" style="display:flex;align-items:center;gap:7px;font-size:12px;color:var(--muted);font-family:'IBM Plex Mono',monospace;">
-                        <div id="mqttDot" style="width:8px;height:8px;border-radius:50%;background:var(--muted);transition:background 0.3s;" title="MQTT státusz"></div>
-                        <div id="sseDot" style="width:8px;height:8px;border-radius:50%;background:var(--muted);transition:background 0.3s;" title="Élő kapcsolat"></div>
-                        <span id="mqttStatusText" style="display:none"></span>
-                    </div>
-                    <a href="/stats" style="display:inline-flex;align-items:center;gap:6px;padding:8px 12px;border-radius:999px;border:1px solid var(--border);background:var(--panel);color:var(--text);font-size:13px;font-weight:600;cursor:pointer;text-decoration:none;transition:all 0.2s;" title="Statisztika">📊</a>
-                    <a href="/config" style="display:inline-flex;align-items:center;gap:6px;padding:8px 12px;border-radius:999px;border:1px solid var(--border);background:var(--panel);color:var(--text);font-size:13px;font-weight:600;cursor:pointer;text-decoration:none;transition:all 0.2s;" title="Beállítások">⚙️</a>
-                    <button class="toggle" id="themeToggle" type="button" title="Téma váltása">
-                        <span id="themeIcon">🌙</span>
-                    </button>
-                </div>
+        <div class="stats">
+            <div class="stat-card">
+                <div class="stat-label">Összes esemény</div>
+                <div class="stat-value" id="statTotal">0</div>
             </div>
-            <div class="stats">
-                <div class="stat-card">
-                    <div class="stat-label">Összes esemény</div>
-                    <div class="stat-value" id="statTotal">0</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-label">Ismert rendszám</div>
-                    <div class="stat-value" id="statKnown">0</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-label">Aktív kamerák</div>
-                    <div class="stat-value" id="statCameras">0</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-label">Utolsó esemény</div>
-                    <div class="stat-value" id="statLast">—</div>
-                </div>
+            <div class="stat-card">
+                <div class="stat-label">Ismert rendszám</div>
+                <div class="stat-value" id="statKnown">0</div>
             </div>
-        </header>
+            <div class="stat-card">
+                <div class="stat-label">Aktív kamerák</div>
+                <div class="stat-value" id="statCameras">0</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">Utolsó esemény</div>
+                <div class="stat-value" id="statLast">—</div>
+            </div>
+        </div>
 
         <section class="filters">
             <div class="filter-row">
@@ -271,7 +460,7 @@
                         <th onclick="sortTable(2)">Szín</th>
                         <th onclick="sortTable(3)">Irány</th>
                         <th onclick="sortTable(4)">Időbélyeg</th>
-                        <th onclick="sortTable(5)">Pontosság (%)</th>
+                        <th onclick="sortTable(5)">Pontosság</th>
                         <th onclick="sortTable(6)">Kamera</th>
                         <th class="no-sort">Kép</th>
                         <th class="no-sort"></th>
@@ -308,9 +497,9 @@
                             </td>
                             <td>
                                 <button onclick="deleteEvent(this, {{ vehicle.id }})"
-                                    style="background:transparent;border:1px solid rgba(216,76,76,0.4);color:var(--danger);border-radius:8px;padding:5px 10px;font-size:12px;font-weight:600;cursor:pointer;font-family:inherit;transition:all 0.2s;"
-                                    onmouseover="this.style.background='rgba(216,76,76,0.1)'"
-                                    onmouseout="this.style.background='transparent'">✕</button>
+                                    style="background:transparent;border:1px solid rgba(216,76,76,0.4);color:var(--danger);border-radius:7px;padding:4px 9px;font-size:12px;font-weight:600;cursor:pointer;font-family:inherit;transition:all 0.15s;"
+                                    onmouseover="this.style.background='rgba(216,76,76,0.08)'"
+                                    onmouseout="this.style.background='transparent'">&#x2715;</button>
                             </td>
                         </tr>
                     {% endfor %}
@@ -322,362 +511,363 @@
         {% if total_count > vehicles|length %}
         <div id="loadMoreArea" style="text-align:center;padding:20px 0;">
             <span style="font-size:13px;color:var(--muted);">
-                Betöltve: <strong id="loadedCount">{{ vehicles|length }}</strong> / <strong>{{ total_count }}</strong>
+                Betöltve: <strong id="loadedCount">{{ vehicles|length }}</strong> / <strong id="totalCount">{{ total_count }}</strong>
             </span>
             <br><br>
             <button id="loadMoreBtn" onclick="loadMore()"
-                style="padding:10px 24px;border-radius:10px;font-size:14px;font-weight:600;font-family:inherit;
-                       background:rgba(91,124,250,0.12);border:1px solid rgba(91,124,250,0.4);
+                style="padding:9px 22px;border-radius:9px;font-size:13px;font-weight:600;font-family:inherit;
+                       background:rgba(91,124,250,0.1);border:1px solid rgba(91,124,250,0.35);
                        color:var(--accent-strong);cursor:pointer;transition:all 0.2s;">
-                ↓ Több betöltése
+                Több betöltése
             </button>
         </div>
         {% endif %}
     </div>
+</main>
 
-    <div id="imageModal">
-        <span id="closeModal">&times;</span>
-        <div id="modalContent">
-            <img id="modalImage" src="" alt="Teljes méretű kép">
-        </div>
+<!-- Image modal -->
+<div id="imageModal">
+    <span id="closeModal">&times;</span>
+    <div id="modalContent">
+        <img id="modalImage" src="" alt="Teljes méretű kép">
     </div>
+</div>
 
-    <footer style="text-align:center;padding:24px 20px;font-size:12px;color:var(--muted);border-top:1px solid var(--border);margin-top:40px;">
-        © 2025 <strong>Czibolya Dániel</strong> &nbsp;·&nbsp;
-        <a href="https://github.com/czdanika" target="_blank" rel="noopener"
-           style="color:var(--accent-strong);text-decoration:none;">github.com/czdanika</a>
-        &nbsp;·&nbsp; ANPR Projekt v2
-    </footer>
+<script>
+    // ── Theme ──────────────────────────────────────────────────────────────────
+    const themeToggleBtn = document.getElementById('themeToggle');
+    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)');
 
-    <script>
-        const modal = document.getElementById("imageModal");
-        const modalImage = document.getElementById("modalImage");
-        const closeModal = document.getElementById("closeModal");
-        const emptyState = document.getElementById("emptyState");
-        const themeToggle = document.getElementById("themeToggle");
-        const themeIcon = document.getElementById("themeIcon");
-        const prefersDark = window.matchMedia("(prefers-color-scheme: dark)");
+    function applyTheme(mode) {
+        document.body.classList.toggle('theme-dark', mode === 'dark');
+        document.getElementById('themeIconMoon').style.display = mode === 'dark' ? 'none' : '';
+        document.getElementById('themeIconSun').style.display = mode === 'dark' ? '' : 'none';
+        document.getElementById('themeLabel').textContent = mode === 'dark' ? 'Világos mód' : 'Sötét mód';
+        localStorage.setItem('anpr-theme', mode);
+    }
 
-        function applyTheme(mode) {
-            document.body.classList.toggle("theme-dark", mode === "dark");
-            themeIcon.textContent = mode === "dark" ? "☀️" : "🌙";
-            localStorage.setItem("anpr-theme", mode);
+    const savedTheme = localStorage.getItem('anpr-theme');
+    applyTheme(savedTheme || (prefersDark.matches ? 'dark' : 'light'));
+    themeToggleBtn.addEventListener('click', () => {
+        applyTheme(document.body.classList.contains('theme-dark') ? 'light' : 'dark');
+    });
+
+    // ── Mobile sidebar ─────────────────────────────────────────────────────────
+    function openSidebar() {
+        document.getElementById('sidebar').classList.add('open');
+        document.getElementById('sidebarOverlay').classList.add('open');
+    }
+    function closeSidebar() {
+        document.getElementById('sidebar').classList.remove('open');
+        document.getElementById('sidebarOverlay').classList.remove('open');
+    }
+
+    // ── Modal ─────────────────────────────────────────────────────────────────
+    function showModal(src) {
+        document.getElementById('modalImage').src = src;
+        document.getElementById('imageModal').style.display = 'block';
+    }
+    document.getElementById('closeModal').addEventListener('click', () => {
+        document.getElementById('imageModal').style.display = 'none';
+    });
+    document.getElementById('imageModal').addEventListener('click', function(e) {
+        if (e.target === this) this.style.display = 'none';
+    });
+
+    // ── Table & filters ───────────────────────────────────────────────────────
+    let rows = Array.from(document.querySelectorAll('#vehicleTable tbody tr'));
+    const searchBox = document.getElementById('searchBox');
+    const dateFrom = document.getElementById('dateFrom');
+    const dateTo = document.getElementById('dateTo');
+    const cameraFilter = document.getElementById('cameraFilter');
+    const typeFilter = document.getElementById('typeFilter');
+    const colorFilter = document.getElementById('colorFilter');
+    const directionFilter = document.getElementById('directionFilter');
+    const quickFilters = document.getElementById('quickFilters');
+    const emptyState = document.getElementById('emptyState');
+
+    const cameraNames = {{ cameras | tojson }};
+
+    const translations = {
+        type: {
+            unknown: "Ismeretlen", car: "Személyautó", truck: "Tehergépjármű",
+            bus: "Busz", motorcycle: "Motor", van: "Kisbusz", bicycle: "Kerékpár"
+        },
+        color: {
+            unknown: "Ismeretlen", white: "Fehér", black: "Fekete", silver: "Ezüst",
+            gray: "Szürke", red: "Piros", blue: "Kék", green: "Zöld",
+            yellow: "Sárga", brown: "Barna", orange: "Narancssárga"
+        },
+        direction: {
+            approaching: "Közeledik", away: "Távolodik", forward: "Előre",
+            reverse: "Hátra", left: "Balra", right: "Jobbra", unknown: "Ismeretlen"
         }
+    };
 
-        applyTheme(localStorage.getItem("anpr-theme") || (prefersDark.matches ? "dark" : "light"));
-        themeToggle.addEventListener("click", () => {
-            applyTheme(document.body.classList.contains("theme-dark") ? "light" : "dark");
+    function normalizeUnknown(v) {
+        const n = (v || "").trim().toLowerCase();
+        return (!n || n === "n/a" || n === "-" || n === "ismeretlen") ? "unknown" : n;
+    }
+    function translate(kind, v) { const n = normalizeUnknown(v); return translations[kind][n] || v || "Ismeretlen"; }
+    function isUnknown(v) { return normalizeUnknown(v) === "unknown"; }
+
+    rows.forEach(row => {
+        row.cells[1].textContent = translate("type", row.dataset.type);
+        row.cells[2].textContent = translate("color", row.dataset.color);
+        row.cells[3].textContent = translate("direction", row.dataset.direction);
+        row.dataset.type = row.cells[1].textContent.toLowerCase();
+        row.dataset.color = row.cells[2].textContent.toLowerCase();
+        row.dataset.direction = row.cells[3].textContent.toLowerCase();
+
+        const ip = row.dataset.cameraIp;
+        const camName = cameraNames[ip] || ip;
+        row.cells[6].querySelector('.camera-badge').textContent = camName;
+        row.dataset.camera = camName.toLowerCase();
+
+        const conf = (row.dataset.confidence || "").toString().trim();
+        const num = Number(conf.replace(",", "."));
+        row.cells[5].textContent = conf && !isNaN(num) ? Math.round(num) + "%" : (conf ? conf + "%" : "0%");
+    });
+
+    const uniqueValues = (key) => {
+        const set = new Set();
+        rows.forEach(r => { if (r.dataset[key] && r.dataset[key] !== "unknown") set.add(r.dataset[key]); });
+        return Array.from(set).sort();
+    };
+
+    function populateSelect(select, values) {
+        values.forEach(v => {
+            const opt = document.createElement("option");
+            opt.value = v; opt.textContent = v.charAt(0).toUpperCase() + v.slice(1);
+            select.appendChild(opt);
         });
+    }
 
-        function showModal(src) { modal.style.display = "block"; modalImage.src = src; }
-        closeModal.onclick = () => { modal.style.display = "none"; modalImage.src = ""; };
-        window.onclick = (e) => { if (e.target === modal) { modal.style.display = "none"; modalImage.src = ""; } };
+    populateSelect(cameraFilter, uniqueValues("camera"));
+    populateSelect(typeFilter, uniqueValues("type"));
+    populateSelect(colorFilter, uniqueValues("color"));
+    populateSelect(directionFilter, uniqueValues("direction"));
 
-        let rows = Array.from(document.querySelectorAll("#vehicleTable tbody tr"));
-        const searchBox = document.getElementById("searchBox");
-        const dateFrom = document.getElementById("dateFrom");
-        const dateTo = document.getElementById("dateTo");
-        const cameraFilter = document.getElementById("cameraFilter");
-        const typeFilter = document.getElementById("typeFilter");
-        const colorFilter = document.getElementById("colorFilter");
-        const directionFilter = document.getElementById("directionFilter");
-        const quickFilters = document.getElementById("quickFilters");
+    const quickState = { known: false, image: false, today: false };
 
-        const cameraNames = {{ cameras | tojson }};
+    quickFilters.addEventListener("click", (e) => {
+        const chip = e.target.closest(".chip");
+        if (!chip) return;
+        const key = chip.dataset.filter;
+        quickState[key] = !quickState[key];
+        chip.classList.toggle("active", quickState[key]);
+        applyFilters();
+    });
 
-        const translations = {
-            type: {
-                car: "Személyautó", vehicle: "Jármű", suv: "SUV", suvmpv: "SUV/MPV",
-                mpv: "MPV", van: "Kisteher", truck: "Teherautó", bus: "Busz",
-                motorcycle: "Motor", motorbike: "Motor", bike: "Kerékpár",
-                bicycle: "Kerékpár", tricycle: "Tricikli", pedestrian: "Gyalogos",
-                unknown: "Ismeretlen"
-            },
-            color: {
-                white: "Fehér", black: "Fekete", gray: "Szürke", grey: "Szürke",
-                silver: "Ezüst", red: "Piros", blue: "Kék", green: "Zöld",
-                yellow: "Sárga", brown: "Barna", orange: "Narancs", unknown: "Ismeretlen"
-            },
-            direction: {
-                approaching: "Közeledik", away: "Távolodik", forward: "Előre",
-                reverse: "Hátra", left: "Balra", right: "Jobbra", unknown: "Ismeretlen"
-            }
-        };
+    [searchBox, dateFrom, dateTo, cameraFilter, typeFilter, colorFilter, directionFilter].forEach(el => {
+        el.addEventListener("input", applyFilters);
+    });
 
-        function normalizeUnknown(v) {
-            const n = (v || "").trim().toLowerCase();
-            return (!n || n === "n/a" || n === "-" || n === "ismeretlen") ? "unknown" : n;
-        }
-        function translate(kind, v) { const n = normalizeUnknown(v); return translations[kind][n] || v || "Ismeretlen"; }
-        function isUnknown(v) { return normalizeUnknown(v) === "unknown"; }
+    function parseDate(v) { if (!v) return null; const d = new Date(v); return isNaN(d) ? null : d; }
+    function rowDate(row) { const r = row.dataset.time; if (!r) return null; const d = new Date(r.replace(" ","T")); return isNaN(d) ? null : d; }
+
+    function applyFilters() {
+        const text = searchBox.value.toLowerCase();
+        const from = parseDate(dateFrom.value);
+        const to = parseDate(dateTo.value);
+        const camera = cameraFilter.value;
+        const type = typeFilter.value;
+        const color = colorFilter.value;
+        const direction = directionFilter.value;
+        let visible = 0;
 
         rows.forEach(row => {
-            row.cells[1].textContent = translate("type", row.dataset.type);
-            row.cells[2].textContent = translate("color", row.dataset.color);
-            row.cells[3].textContent = translate("direction", row.dataset.direction);
-            row.dataset.type = row.cells[1].textContent.toLowerCase();
-            row.dataset.color = row.cells[2].textContent.toLowerCase();
-            row.dataset.direction = row.cells[3].textContent.toLowerCase();
-
-            const ip = row.dataset.cameraIp;
-            const camName = cameraNames[ip] || ip;
-            row.cells[6].querySelector('.camera-badge').textContent = camName;
-            row.dataset.camera = camName.toLowerCase();
-
-            const conf = (row.dataset.confidence || "").toString().trim();
-            const num = Number(conf.replace(",", "."));
-            row.cells[5].textContent = conf && !isNaN(num) ? Math.round(num) + "%" : (conf ? conf + "%" : "0%");
+            const combined = `${row.dataset.plate} ${row.dataset.type} ${row.dataset.color} ${row.dataset.direction} ${row.dataset.camera}`;
+            const dt = rowDate(row);
+            const show = combined.includes(text)
+                && (!camera || row.dataset.camera === camera)
+                && (!type || row.dataset.type === type)
+                && (!color || row.dataset.color === color)
+                && (!direction || row.dataset.direction === direction)
+                && (!from || (dt && dt >= from))
+                && (!to || (dt && dt <= new Date(to.getTime() + 86400000 - 1)))
+                && (!quickState.known || !isUnknown(row.dataset.plate))
+                && (!quickState.image || row.dataset.hasImage === "1")
+                && (!quickState.today || (() => {
+                    const s = new Date(); s.setHours(0,0,0,0);
+                    const e = new Date(s); e.setDate(e.getDate()+1);
+                    return dt && dt >= s && dt < e;
+                })());
+            row.style.display = show ? "" : "none";
+            if (show) visible++;
         });
 
-        const uniqueValues = (key) => {
-            const set = new Set();
-            rows.forEach(r => { if (r.dataset[key] && r.dataset[key] !== "unknown") set.add(r.dataset[key]); });
-            return Array.from(set).sort();
-        };
+        emptyState.style.display = visible === 0 ? "block" : "none";
+        updateStats();
+    }
 
-        function populateSelect(select, values) {
-            values.forEach(v => {
-                const opt = document.createElement("option");
-                opt.value = v;
-                opt.textContent = v.charAt(0).toUpperCase() + v.slice(1);
-                select.appendChild(opt);
+    function updateStats() {
+        const vis = rows.filter(r => r.style.display !== "none");
+        const cams = new Set(vis.map(r => r.dataset.cameraIp).filter(Boolean));
+        document.getElementById("statTotal").textContent = vis.length;
+        document.getElementById("statKnown").textContent = vis.filter(r => !isUnknown(r.dataset.plate)).length;
+        document.getElementById("statCameras").textContent = cams.size;
+        const last = vis.map(r => rowDate(r)).filter(Boolean).sort((a,b) => b-a)[0];
+        document.getElementById("statLast").textContent = last ? last.toLocaleString() : "—";
+    }
+
+    function sortTable(ci) {
+        const table = document.getElementById("vehicleTable");
+        const header = table.querySelectorAll("th")[ci];
+        const cur = header.getAttribute("data-sort") || "none";
+        const next = cur === "none" ? "asc" : cur === "asc" ? "desc" : "none";
+        table.querySelectorAll("th").forEach(th => { th.removeAttribute("data-sort"); th.classList.remove("sorted-asc","sorted-desc"); });
+        if (next !== "none") {
+            rows.sort((a, b) => {
+                const aT = a.cells[ci].innerText.toLowerCase();
+                const bT = b.cells[ci].innerText.toLowerCase();
+                const aV = ci === 4 ? rowDate(a) : aT;
+                const bV = ci === 4 ? rowDate(b) : bT;
+                if (aV instanceof Date && bV instanceof Date) return (next==="asc"?1:-1)*(aV-bV);
+                if (!isNaN(aT) && !isNaN(bT)) return (next==="asc"?1:-1)*(parseFloat(aT)-parseFloat(bT));
+                return (next==="asc"?1:-1)*aT.localeCompare(bT);
             });
+            header.setAttribute("data-sort", next);
+            header.classList.add(next === "asc" ? "sorted-asc" : "sorted-desc");
         }
+        rows.forEach(r => table.tBodies[0].appendChild(r));
+        applyFilters();
+    }
 
-        populateSelect(cameraFilter, uniqueValues("camera"));
-        populateSelect(typeFilter, uniqueValues("type"));
-        populateSelect(colorFilter, uniqueValues("color"));
-        populateSelect(directionFilter, uniqueValues("direction"));
+    updateStats();
+    applyFilters();
 
-        const quickState = { known: false, image: false, today: false };
-
-        quickFilters.addEventListener("click", (e) => {
-            const chip = e.target.closest(".chip");
-            if (!chip) return;
-            const key = chip.dataset.filter;
-            quickState[key] = !quickState[key];
-            chip.classList.toggle("active", quickState[key]);
-            applyFilters();
-        });
-
-        [searchBox, dateFrom, dateTo, cameraFilter, typeFilter, colorFilter, directionFilter].forEach(el => {
-            el.addEventListener("input", applyFilters);
-        });
-
-        function parseDate(v) { if (!v) return null; const d = new Date(v); return isNaN(d) ? null : d; }
-        function rowDate(row) { const r = row.dataset.time; if (!r) return null; const d = new Date(r.replace(" ","T")); return isNaN(d) ? null : d; }
-
-        function applyFilters() {
-            const text = searchBox.value.toLowerCase();
-            const from = parseDate(dateFrom.value);
-            const to = parseDate(dateTo.value);
-            const camera = cameraFilter.value;
-            const type = typeFilter.value;
-            const color = colorFilter.value;
-            const direction = directionFilter.value;
-            let visible = 0;
-
-            rows.forEach(row => {
-                const combined = `${row.dataset.plate} ${row.dataset.type} ${row.dataset.color} ${row.dataset.direction} ${row.dataset.camera}`;
-                const dt = rowDate(row);
-                const show = combined.includes(text)
-                    && (!camera || row.dataset.camera === camera)
-                    && (!type || row.dataset.type === type)
-                    && (!color || row.dataset.color === color)
-                    && (!direction || row.dataset.direction === direction)
-                    && (!from || (dt && dt >= from))
-                    && (!to || (dt && dt <= new Date(to.getTime() + 86400000 - 1)))
-                    && (!quickState.known || !isUnknown(row.dataset.plate))
-                    && (!quickState.image || row.dataset.hasImage === "1")
-                    && (!quickState.today || (() => {
-                        const s = new Date(); s.setHours(0,0,0,0);
-                        const e = new Date(s); e.setDate(e.getDate()+1);
-                        return dt && dt >= s && dt < e;
-                    })());
-                row.style.display = show ? "" : "none";
-                if (show) visible++;
-            });
-
-            emptyState.style.display = visible === 0 ? "block" : "none";
+    async function deleteEvent(btn, id) {
+        if (!confirm('Biztosan törlöd ezt az eseményt?')) return;
+        const res = await fetch('/api/events/' + id, { method: 'DELETE' });
+        if (res.ok) {
+            const row = btn.closest('tr');
+            const idx = rows.indexOf(row);
+            if (idx > -1) rows.splice(idx, 1);
+            row.remove();
             updateStats();
         }
+    }
 
-        function updateStats() {
-            const vis = rows.filter(r => r.style.display !== "none");
-            const cams = new Set(vis.map(r => r.dataset.cameraIp).filter(Boolean));
-            document.getElementById("statTotal").textContent = vis.length;
-            document.getElementById("statKnown").textContent = vis.filter(r => !isUnknown(r.dataset.plate)).length;
-            document.getElementById("statCameras").textContent = cams.size;
-            const last = vis.map(r => rowDate(r)).filter(Boolean).sort((a,b) => b-a)[0];
-            document.getElementById("statLast").textContent = last ? last.toLocaleString() : "—";
-        }
+    // ── Load more pagination ───────────────────────────────────────────────────
+    let loadedCount = {{ vehicles|length }};
+    const totalCount = {{ total_count|default(vehicles|length) }};
+    const pageSize = {{ page_size|default(100) }};
+    const cameras_map = {{ cameras | tojson }};
 
-        function sortTable(ci) {
-            const table = document.getElementById("vehicleTable");
-            const header = table.querySelectorAll("th")[ci];
-            const cur = header.getAttribute("data-sort") || "none";
-            const next = cur === "none" ? "asc" : cur === "asc" ? "desc" : "none";
-            table.querySelectorAll("th").forEach(th => { th.removeAttribute("data-sort"); th.classList.remove("sorted-asc","sorted-desc"); });
-            if (next !== "none") {
-                rows.sort((a, b) => {
-                    const aT = a.cells[ci].innerText.toLowerCase();
-                    const bT = b.cells[ci].innerText.toLowerCase();
-                    const aV = ci === 4 ? rowDate(a) : aT;
-                    const bV = ci === 4 ? rowDate(b) : bT;
-                    if (aV instanceof Date && bV instanceof Date) return (next==="asc"?1:-1)*(aV-bV);
-                    if (!isNaN(aT) && !isNaN(bT)) return (next==="asc"?1:-1)*(parseFloat(aT)-parseFloat(bT));
-                    return (next==="asc"?1:-1)*aT.localeCompare(bT);
-                });
-                header.setAttribute("data-sort", next);
-                header.classList.add(next === "asc" ? "sorted-asc" : "sorted-desc");
+    function createRow(v) {
+        const tr = document.createElement('tr');
+        const camLabel = cameras_map[v.ip_address] || v.ip_address || '';
+        tr.dataset.plate = (v.license_plate || '').toLowerCase();
+        tr.dataset.type = (v.type || '').toLowerCase();
+        tr.dataset.color = (v.color || '').toLowerCase();
+        tr.dataset.direction = (v.direction || '').toLowerCase();
+        tr.dataset.time = v.timestamp || '';
+        tr.dataset.confidence = v.confidence || '';
+        tr.dataset.hasImage = v.image ? '1' : '0';
+        tr.dataset.cameraIp = v.ip_address || '';
+        tr.dataset.camera = camLabel.toLowerCase();
+        tr.dataset.id = v.id;
+        tr.innerHTML = `
+            <td class="plate">${v.license_plate || ''}</td>
+            <td>${v.type || ''}</td>
+            <td>${v.color || ''}</td>
+            <td>${v.direction || ''}</td>
+            <td class="muted">${v.timestamp || ''}</td>
+            <td class="confidence">${v.confidence || ''}</td>
+            <td><span class="camera-badge">${camLabel}</span></td>
+            <td>${v.image ? `<img class="img-thumb" src="${v.image}" alt="${v.license_plate}" onclick="showModal(this.src)"/>` : '<span class="muted">Nincs</span>'}</td>
+            <td><button onclick="deleteEvent(this, ${v.id})"
+                style="background:transparent;border:1px solid rgba(216,76,76,0.4);color:var(--danger);border-radius:7px;padding:4px 9px;font-size:12px;font-weight:600;cursor:pointer;font-family:inherit;transition:all 0.15s;"
+                onmouseover="this.style.background='rgba(216,76,76,0.08)'"
+                onmouseout="this.style.background='transparent'">&#x2715;</button></td>
+        `;
+        return tr;
+    }
+
+    async function loadMore() {
+        const btn = document.getElementById('loadMoreBtn');
+        if (btn) { btn.disabled = true; btn.textContent = 'Töltés...'; }
+        try {
+            const res = await fetch(`/api/vehicles?limit=${pageSize}&offset=${loadedCount}`);
+            const data = await res.json();
+            const tbody = document.querySelector('#vehicleTable tbody');
+            data.forEach(v => {
+                const tr = createRow(v);
+                tbody.appendChild(tr);
+                rows.push(tr);
+            });
+            loadedCount += data.length;
+            const countEl = document.getElementById('loadedCount');
+            if (countEl) countEl.textContent = loadedCount;
+            if (loadedCount >= totalCount) {
+                const area = document.getElementById('loadMoreArea');
+                if (area) area.style.display = 'none';
             }
-            rows.forEach(r => table.tBodies[0].appendChild(r));
             applyFilters();
-        }
+        } catch(e) { console.error('Betöltési hiba:', e); }
+        if (btn) { btn.disabled = false; btn.textContent = 'Több betöltése'; }
+    }
 
-        updateStats();
-        applyFilters();
+    {% if auto_refresh %}
+    const _refreshInterval = {{ refresh_interval }};
+    let _countdown = _refreshInterval;
+    const _refreshInfo = document.createElement('div');
+    _refreshInfo.style.cssText = 'position:fixed;bottom:20px;right:20px;background:var(--panel);border:1px solid var(--border);border-radius:10px;padding:8px 14px;font-size:12px;color:var(--muted);font-family:"IBM Plex Mono",monospace;box-shadow:var(--shadow);z-index:100;';
+    document.body.appendChild(_refreshInfo);
+    const _timer = setInterval(() => {
+        _countdown--;
+        _refreshInfo.textContent = 'Frissítés: ' + _countdown + 's';
+        if (_countdown <= 0) { clearInterval(_timer); location.reload(); }
+    }, 1000);
+    {% endif %}
 
-        async function deleteEvent(btn, id) {
-            if (!confirm('Biztosan törlöd ezt az eseményt?')) return;
-            const res = await fetch('/api/events/' + id, { method: 'DELETE' });
-            if (res.ok) {
-                const row = btn.closest('tr');
-                const idx = rows.indexOf(row);
-                if (idx > -1) rows.splice(idx, 1);
-                row.remove();
-                updateStats();
-            }
-        }
+    // ── MQTT státusz ───────────────────────────────────────────────────────────
+    async function checkMqttStatus() {
+        try {
+            const res = await fetch('/api/mqtt/status');
+            const json = await res.json();
+            const dot = document.getElementById('mqttDot');
+            if (!json.enabled) { dot.style.background = '#484f58'; dot.style.boxShadow = 'none'; return; }
+            dot.style.background = json.connected ? '#2ecc71' : 'var(--danger)';
+            dot.style.boxShadow = json.connected ? '0 0 5px rgba(46,204,113,0.5)' : 'none';
+        } catch(e) {}
+    }
+    checkMqttStatus();
+    setInterval(checkMqttStatus, 10000);
 
-        // Load more pagination
-        let loadedCount = {{ vehicles|length }};
-        const totalCount = {{ total_count|default(vehicles|length) }};
-        const pageSize = {{ page_size|default(100) }};
-        const cameras_map = {{ cameras | tojson }};
+    // ── SSE – valós idejű frissítés ────────────────────────────────────────────
+    const sseDot = document.getElementById('sseDot');
 
-        function createRow(v) {
-            const tr = document.createElement('tr');
-            const camLabel = cameras_map[v.ip_address] || v.ip_address || '';
-            tr.dataset.plate = (v.license_plate || '').toLowerCase();
-            tr.dataset.type = (v.type || '').toLowerCase();
-            tr.dataset.color = (v.color || '').toLowerCase();
-            tr.dataset.direction = (v.direction || '').toLowerCase();
-            tr.dataset.time = v.timestamp || '';
-            tr.dataset.confidence = v.confidence || '';
-            tr.dataset.hasImage = v.image ? '1' : '0';
-            tr.dataset.cameraIp = v.ip_address || '';
-            tr.dataset.camera = camLabel.toLowerCase();
-            tr.dataset.id = v.id;
-            tr.innerHTML = `
-                <td class="plate">${v.license_plate || ''}</td>
-                <td>${v.type || ''}</td>
-                <td>${v.color || ''}</td>
-                <td>${v.direction || ''}</td>
-                <td class="muted">${v.timestamp || ''}</td>
-                <td class="confidence">${v.confidence || ''}</td>
-                <td><span class="camera-badge">${camLabel}</span></td>
-                <td>${v.image ? `<img class="img-thumb" src="${v.image}" alt="${v.license_plate}" onclick="showModal(this.src)"/>` : '<span class="muted">Nincs</span>'}</td>
-                <td><button onclick="deleteEvent(this, ${v.id})"
-                    style="background:transparent;border:1px solid rgba(216,76,76,0.4);color:var(--danger);border-radius:8px;padding:5px 10px;font-size:12px;font-weight:600;cursor:pointer;font-family:inherit;transition:all 0.2s;"
-                    onmouseover="this.style.background='rgba(216,76,76,0.1)'"
-                    onmouseout="this.style.background='transparent'">✕</button></td>
-            `;
-            return tr;
-        }
-
-        async function loadMore() {
-            const btn = document.getElementById('loadMoreBtn');
-            if (btn) { btn.disabled = true; btn.textContent = 'Töltés...'; }
+    function connectSSE() {
+        const es = new EventSource('/api/events/stream');
+        es.onopen = () => {
+            if (sseDot) { sseDot.style.background = '#2ecc71'; sseDot.style.boxShadow = '0 0 5px rgba(46,204,113,0.5)'; }
+        };
+        es.onmessage = (e) => {
             try {
-                const res = await fetch(`/api/vehicles?limit=${pageSize}&offset=${loadedCount}`);
-                const data = await res.json();
+                const v = JSON.parse(e.data);
+                const tr = createRow(v);
+                tr.style.background = v.known ? 'rgba(46,204,113,0.15)' : 'rgba(216,76,76,0.1)';
+                setTimeout(() => { tr.style.transition = 'background 1.5s'; tr.style.background = ''; }, 100);
                 const tbody = document.querySelector('#vehicleTable tbody');
-                data.forEach(v => {
-                    const tr = createRow(v);
-                    tbody.appendChild(tr);
-                    rows.push(tr);
-                });
-                loadedCount += data.length;
-                const countEl = document.getElementById('loadedCount');
-                if (countEl) countEl.textContent = loadedCount;
-                if (loadedCount >= totalCount) {
-                    const area = document.getElementById('loadMoreArea');
-                    if (area) area.style.display = 'none';
-                }
-                applyFilters();
-            } catch(e) { console.error('Betöltési hiba:', e); }
-            if (btn) { btn.disabled = false; btn.textContent = '↓ Több betöltése'; }
-        }
-
-        {% if auto_refresh %}
-        const _refreshInterval = {{ refresh_interval }};
-        let _countdown = _refreshInterval;
-        const _refreshInfo = document.createElement('div');
-        _refreshInfo.style.cssText = 'position:fixed;bottom:20px;right:20px;background:var(--panel);border:1px solid var(--border);border-radius:10px;padding:8px 14px;font-size:12px;color:var(--muted);font-family:"IBM Plex Mono",monospace;box-shadow:var(--shadow);';
-        document.body.appendChild(_refreshInfo);
-        const _timer = setInterval(() => {
-            _countdown--;
-            _refreshInfo.textContent = '↻ frissítés: ' + _countdown + 's';
-            if (_countdown <= 0) { clearInterval(_timer); location.reload(); }
-        }, 1000);
-        {% endif %}
-
-        async function checkMqttStatus() {
-            try {
-                const res = await fetch('/api/mqtt/status');
-                const json = await res.json();
-                const dot = document.getElementById('mqttDot');
-                if (!json.enabled) { dot.style.background = 'var(--muted)'; return; }
-                dot.style.background = json.connected ? '#2ecc71' : 'var(--danger)';
-                if (json.connected) dot.style.boxShadow = '0 0 6px rgba(46,204,113,0.5)';
-            } catch(e) {}
-        }
-        checkMqttStatus();
-        setInterval(checkMqttStatus, 10000);
-
-        // ── SSE – valós idejű esemény megjelenítés ──────────────────────────
-        const sseDot = document.getElementById('sseDot');
-
-        function connectSSE() {
-            const es = new EventSource('/api/events/stream');
-
-            es.onopen = () => {
-                if (sseDot) { sseDot.style.background = '#2ecc71'; sseDot.title = 'Élő kapcsolat'; }
-            };
-
-            es.onmessage = (e) => {
-                try {
-                    const v = JSON.parse(e.data);
-                    const tr = createRow(v);
-                    // Highlight animáció
-                    tr.style.background = v.known
-                        ? 'rgba(46,204,113,0.18)'
-                        : 'rgba(216,76,76,0.13)';
-                    setTimeout(() => { tr.style.transition = 'background 1.5s'; tr.style.background = ''; }, 100);
-
-                    const tbody = document.querySelector('#vehicleTable tbody');
-                    tbody.insertBefore(tr, tbody.firstChild);
-                    rows.unshift(tr);
-                    loadedCount++;
-
-                    const totalEl = document.getElementById('totalCount');
-                    const loadedEl = document.getElementById('loadedCount');
-                    if (totalEl) totalEl.textContent = parseInt(totalEl.textContent||0) + 1;
-                    if (loadedEl) loadedEl.textContent = loadedCount;
-
-                    updateStats();
-                    applyFilters();
-                } catch(err) { console.warn('SSE parse hiba', err); }
-            };
-
-            es.onerror = () => {
-                if (sseDot) { sseDot.style.background = 'var(--danger)'; sseDot.title = 'Nincs kapcsolat – újracsatlakozás...'; }
-                es.close();
-                setTimeout(connectSSE, 5000);  // 5 mp múlva újrapróbál
-            };
-        }
-        connectSSE();
-    </script>
+                tbody.insertBefore(tr, tbody.firstChild);
+                rows.unshift(tr);
+                loadedCount++;
+                const totalEl = document.getElementById('totalCount');
+                const loadedEl = document.getElementById('loadedCount');
+                if (totalEl) totalEl.textContent = parseInt(totalEl.textContent||0) + 1;
+                if (loadedEl) loadedEl.textContent = loadedCount;
+                updateStats(); applyFilters();
+            } catch(err) { console.warn('SSE parse hiba', err); }
+        };
+        es.onerror = () => {
+            if (sseDot) { sseDot.style.background = 'var(--danger)'; sseDot.style.boxShadow = 'none'; }
+            es.close();
+            setTimeout(connectSSE, 5000);
+        };
+    }
+    connectSSE();
+</script>
 </body>
 </html>

@@ -8,12 +8,12 @@
         @import url('https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;600&display=swap');
 
         :root {
-            --bg: #f7f7f5;
-            --bg-soft: #fbfbfa;
-            --panel: rgba(255,255,255,0.9);
+            --bg: #f0f2f5;
+            --bg-soft: #e8eaed;
+            --panel: rgba(255,255,255,0.98);
             --panel-strong: rgba(255,255,255,0.98);
             --border: rgba(15,18,26,0.08);
-            --text: #111318;
+            --text: #1a1d23;
             --muted: #5a6270;
             --accent: #5b7cfa;
             --accent-strong: #2d4df4;
@@ -21,24 +21,24 @@
             --success-bg: rgba(45,138,78,0.1);
             --success-color: #1e7a42;
             --success-border: rgba(45,138,78,0.3);
-            --shadow: 0 20px 60px rgba(17,19,24,0.08);
+            --shadow: 0 2px 12px rgba(17,19,24,0.07);
         }
 
         .theme-dark {
             --bg: #0e1117;
             --bg-soft: #111622;
-            --panel: rgba(16,20,30,0.78);
-            --panel-strong: rgba(16,20,30,0.92);
+            --panel: rgba(22,27,36,0.98);
+            --panel-strong: rgba(26,32,48,0.98);
             --border: rgba(255,255,255,0.08);
-            --text: #eef2f7;
-            --muted: #9aa3b2;
+            --text: #e6edf3;
+            --muted: #8b949e;
             --accent: #77a0ff;
             --accent-strong: #4b7cff;
             --danger: #ff7a7a;
             --success-bg: rgba(76,175,122,0.1);
             --success-color: #4caf7a;
             --success-border: rgba(76,175,122,0.3);
-            --shadow: 0 20px 60px rgba(0,0,0,0.35);
+            --shadow: 0 2px 12px rgba(0,0,0,0.3);
         }
 
         * { box-sizing: border-box; }
@@ -47,120 +47,134 @@
             margin: 0;
             color: var(--text);
             font-family: 'Manrope', sans-serif;
-            background: linear-gradient(180deg, var(--bg), var(--bg-soft));
+            background: var(--bg);
             min-height: 100vh;
+            display: flex;
             transition: background 0.2s, color 0.2s;
         }
 
-        .page {
-            max-width: 860px;
-            margin: 0 auto;
-            padding: 32px 20px 80px;
+        /* ── Sidebar ── */
+        .sidebar {
+            width: 220px; min-height: 100vh;
+            background: #0d1117;
+            border-right: 1px solid rgba(255,255,255,0.06);
+            display: flex; flex-direction: column;
+            position: fixed; top: 0; left: 0; z-index: 200;
+            transition: transform 0.28s ease;
         }
 
-        .topbar {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            margin-bottom: 32px;
-            gap: 12px;
-            position: sticky;
-            top: 0;
-            z-index: 100;
-            background: var(--bg);
-            padding: 12px 0;
-            border-bottom: 1px solid var(--border);
-            backdrop-filter: blur(10px);
+        .sidebar-brand {
+            display: flex; align-items: center; gap: 11px;
+            padding: 22px 18px 18px;
+            border-bottom: 1px solid rgba(255,255,255,0.06);
         }
 
-        .title { display: flex; align-items: center; gap: 12px; }
-
-        .badge {
-            font-family: 'IBM Plex Mono', monospace;
-            padding: 6px 10px;
-            border-radius: 999px;
-            background: rgba(91,124,250,0.12);
-            border: 1px solid rgba(91,124,250,0.35);
-            font-size: 12px;
-            letter-spacing: 0.08em;
-            text-transform: uppercase;
-            color: var(--accent-strong);
+        .brand-mark {
+            width: 34px; height: 34px; background: #5b7cfa;
+            border-radius: 9px; display: flex; align-items: center; justify-content: center;
+            font-weight: 800; font-size: 15px; color: white;
+            font-family: 'IBM Plex Mono', monospace; flex-shrink: 0;
         }
 
-        h1 { margin: 0; font-size: clamp(20px, 3vw, 28px); font-weight: 700; }
+        .brand-title { font-size: 14px; font-weight: 700; color: #e6edf3; line-height: 1.2; }
+        .brand-version { font-size: 10px; color: #484f58; font-family: 'IBM Plex Mono', monospace; margin-top: 1px; }
 
-        .toolbar { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+        .sidebar-nav {
+            flex: 1; padding: 10px;
+            display: flex; flex-direction: column; gap: 2px;
+        }
 
-        .mqtt-status {
-            display: flex;
-            align-items: center;
-            gap: 7px;
-            font-size: 12px;
-            color: var(--muted);
+        .nav-item {
+            display: flex; align-items: center; gap: 10px;
+            padding: 9px 11px; border-radius: 8px;
+            color: rgba(139,148,158,0.9); text-decoration: none;
+            font-size: 13px; font-weight: 500; transition: all 0.15s;
+        }
+
+        .nav-item:hover { background: rgba(255,255,255,0.06); color: #c9d1d9; }
+        .nav-item.active { background: rgba(91,124,250,0.16); color: #7fa5ff; font-weight: 600; }
+        .nav-item svg { flex-shrink: 0; opacity: 0.75; }
+        .nav-item.active svg { opacity: 1; }
+
+        .sidebar-footer {
+            padding: 14px 12px; border-top: 1px solid rgba(255,255,255,0.06);
+            display: flex; flex-direction: column; gap: 10px;
+        }
+
+        .status-bar {
+            display: flex; align-items: center; gap: 14px; padding: 0 2px;
+        }
+
+        .status-item {
+            display: flex; align-items: center; gap: 5px;
+            font-size: 11px; color: #6e7681;
             font-family: 'IBM Plex Mono', monospace;
         }
 
         .status-dot {
-            width: 8px; height: 8px;
-            border-radius: 50%;
-            background: var(--muted);
-            transition: background 0.3s;
+            width: 7px; height: 7px; border-radius: 50%;
+            background: #484f58; transition: background 0.3s, box-shadow 0.3s; flex-shrink: 0;
         }
-        .status-dot.connected { background: #2ecc71; box-shadow: 0 0 6px rgba(46,204,113,0.5); }
-        .status-dot.disconnected { background: var(--danger); }
+        .status-dot.connected { background: #2ecc71; box-shadow: 0 0 5px rgba(46,204,113,0.5); }
+        .status-dot.disconnected { background: #ff7a7a; }
 
-        .btn-back {
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-            padding: 8px 14px;
-            border-radius: 999px;
-            border: 1px solid var(--border);
-            background: var(--panel);
-            color: var(--text);
-            font-size: 13px;
-            font-weight: 600;
-            cursor: pointer;
-            text-decoration: none;
-            transition: all 0.2s;
+        .theme-btn {
+            display: flex; align-items: center; gap: 7px;
+            padding: 7px 11px; border-radius: 7px;
+            background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.08);
+            color: #8b949e; font-size: 12px; font-weight: 500;
+            cursor: pointer; font-family: inherit; transition: all 0.15s; width: 100%;
         }
-        .btn-back:hover { border-color: rgba(91,124,250,0.4); background: rgba(91,124,250,0.06); }
+        .theme-btn:hover { background: rgba(255,255,255,0.09); color: #c9d1d9; }
 
-        .btn-icon {
-            display: inline-flex; align-items: center;
-            padding: 8px 12px; border-radius: 999px;
-            border: 1px solid var(--border); background: var(--panel);
-            color: var(--text); font-size: 16px; cursor: pointer;
-            transition: all 0.2s;
+        /* ── Main content ── */
+        .main-content {
+            margin-left: 220px; flex: 1; min-width: 0; min-height: 100vh;
+            display: flex; flex-direction: column;
         }
-        .btn-icon:hover { border-color: rgba(91,124,250,0.4); background: rgba(91,124,250,0.06); }
 
+        /* Sticky page header with save button */
+        .page-header {
+            position: sticky; top: 0; z-index: 100;
+            background: var(--bg);
+            border-bottom: 1px solid var(--border);
+            padding: 14px 32px;
+            display: flex; align-items: center; justify-content: space-between; gap: 12px;
+        }
+
+        .page-title { margin: 0; font-size: 20px; font-weight: 700; }
+
+        .page-toolbar { display: flex; align-items: center; gap: 10px; }
+
+        .page { max-width: 860px; padding: 24px 32px 80px; }
+
+        /* ── Sections ── */
         .section {
             background: var(--panel-strong);
             border: 1px solid var(--border);
-            border-radius: 20px;
-            padding: 24px;
-            margin-bottom: 16px;
+            border-radius: 16px;
+            padding: 22px;
+            margin-bottom: 14px;
             box-shadow: var(--shadow);
         }
 
         .section-title {
-            font-size: 12px;
+            font-size: 11px;
             font-weight: 700;
             text-transform: uppercase;
             letter-spacing: 0.1em;
             color: var(--accent-strong);
-            margin: 0 0 20px;
+            margin: 0 0 18px;
         }
 
-        .field { margin-bottom: 18px; }
+        .field { margin-bottom: 16px; }
         .field:last-child { margin-bottom: 0; }
 
         label {
             display: block;
             font-size: 13px;
             font-weight: 600;
-            margin-bottom: 6px;
+            margin-bottom: 5px;
         }
 
         .input {
@@ -168,23 +182,23 @@
             background: transparent;
             color: var(--text);
             border: 1px solid var(--border);
-            border-radius: 12px;
-            padding: 10px 12px;
-            font-size: 14px;
+            border-radius: 10px;
+            padding: 9px 11px;
+            font-size: 13px;
             font-family: inherit;
             outline: none;
             transition: border 0.2s, box-shadow 0.2s;
         }
         .input:focus {
-            border-color: rgba(91,124,250,0.6);
-            box-shadow: 0 0 0 3px rgba(91,124,250,0.12);
+            border-color: rgba(91,124,250,0.55);
+            box-shadow: 0 0 0 3px rgba(91,124,250,0.1);
         }
         .input::placeholder { color: rgba(90,98,112,0.6); }
 
         .help {
             font-size: 12px;
             color: var(--muted);
-            margin-top: 5px;
+            margin-top: 4px;
             line-height: 1.6;
         }
         .help code {
@@ -197,767 +211,795 @@
         }
 
         .toggle-row {
-            display: flex;
-            align-items: flex-start;
-            justify-content: space-between;
-            gap: 16px;
+            display: flex; align-items: flex-start; justify-content: space-between; gap: 16px;
         }
         .toggle-label-group { flex: 1; }
         .toggle-label-group label { margin-bottom: 3px; }
 
         .switch {
-            position: relative;
-            display: inline-block;
-            width: 44px; height: 24px;
-            flex-shrink: 0;
-            margin-top: 1px;
+            position: relative; display: inline-block;
+            width: 44px; height: 24px; flex-shrink: 0; margin-top: 1px;
         }
         .switch input { opacity: 0; width: 0; height: 0; }
         .slider {
-            position: absolute;
-            cursor: pointer;
+            position: absolute; cursor: pointer;
             top: 0; left: 0; right: 0; bottom: 0;
-            background: rgba(90,98,112,0.25);
-            border-radius: 24px;
-            transition: 0.3s;
+            background: rgba(90,98,112,0.25); border-radius: 24px; transition: 0.3s;
         }
         .slider:before {
-            position: absolute;
-            content: "";
-            height: 18px; width: 18px;
-            left: 3px; bottom: 3px;
-            background: white;
-            border-radius: 50%;
-            transition: 0.3s;
+            position: absolute; content: "";
+            height: 18px; width: 18px; left: 3px; bottom: 3px;
+            background: white; border-radius: 50%; transition: 0.3s;
             box-shadow: 0 1px 4px rgba(0,0,0,0.2);
         }
         input:checked + .slider { background: var(--accent-strong); }
         input:checked + .slider:before { transform: translateX(20px); }
 
         .grid-2 {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 16px;
+            display: grid; grid-template-columns: 1fr 1fr; gap: 14px;
         }
         @media (max-width: 600px) { .grid-2 { grid-template-columns: 1fr; } }
 
         .btn {
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            padding: 11px 22px;
-            border-radius: 12px;
-            border: none;
-            font-size: 14px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.2s;
-            font-family: inherit;
+            display: inline-flex; align-items: center; gap: 7px;
+            padding: 10px 20px; border-radius: 10px; border: none;
+            font-size: 13px; font-weight: 600; cursor: pointer;
+            transition: all 0.15s; font-family: inherit;
         }
         .btn-primary { background: var(--accent-strong); color: white; }
         .btn-primary:hover { opacity: 0.85; transform: translateY(-1px); }
         .btn-primary:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
         .btn-secondary {
-            background: transparent;
-            color: var(--text);
-            border: 1px solid var(--border);
+            background: transparent; color: var(--text); border: 1px solid var(--border);
         }
         .btn-secondary:hover { border-color: rgba(91,124,250,0.4); background: rgba(91,124,250,0.06); }
         .btn-secondary:disabled { opacity: 0.5; cursor: not-allowed; }
 
         .btn-del {
-            background: transparent;
-            color: var(--danger);
+            background: transparent; color: var(--danger);
             border: 1px solid rgba(216,76,76,0.35);
-            padding: 6px 12px;
-            font-size: 12px;
-            border-radius: 8px;
-            font-family: inherit;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.2s;
+            padding: 5px 11px; font-size: 12px; border-radius: 7px;
+            font-family: inherit; font-weight: 600; cursor: pointer; transition: all 0.15s;
         }
         .btn-del:hover { background: rgba(216,76,76,0.08); }
 
         .action-row {
-            display: flex;
-            gap: 10px;
-            align-items: center;
-            margin-top: 8px;
-            flex-wrap: wrap;
+            display: flex; gap: 10px; align-items: center; margin-top: 8px; flex-wrap: wrap;
         }
 
         .toast {
-            padding: 10px 16px;
-            border-radius: 10px;
-            font-size: 13px;
-            font-weight: 500;
-            display: none;
+            padding: 8px 14px; border-radius: 8px;
+            font-size: 12px; font-weight: 500; display: none;
         }
         .toast.success {
-            background: var(--success-bg);
-            color: var(--success-color);
+            background: var(--success-bg); color: var(--success-color);
             border: 1px solid var(--success-border);
         }
         .toast.error {
-            background: rgba(216,76,76,0.1);
-            color: var(--danger);
+            background: rgba(216,76,76,0.1); color: var(--danger);
             border: 1px solid rgba(216,76,76,0.3);
         }
 
-        .plates-list { margin-bottom: 16px; }
+        .plates-list { margin-bottom: 14px; }
         .plate-item {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 10px 14px;
-            border: 1px solid var(--border);
-            border-radius: 12px;
-            margin-bottom: 8px;
-            background: var(--panel);
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 9px 13px; border: 1px solid var(--border);
+            border-radius: 10px; margin-bottom: 7px; background: var(--panel);
         }
         .plate-item:last-child { margin-bottom: 0; }
-        .plate-info { display: flex; align-items: center; gap: 12px; }
+        .plate-info { display: flex; align-items: center; gap: 10px; }
         .plate-num {
-            font-family: 'IBM Plex Mono', monospace;
-            font-weight: 600;
-            color: var(--accent-strong);
-            font-size: 14px;
+            font-family: 'IBM Plex Mono', monospace; font-weight: 600;
+            color: var(--accent-strong); font-size: 13px;
         }
-        .plate-name { color: var(--muted); font-size: 13px; }
+        .plate-name { color: var(--muted); font-size: 12px; }
         .empty-plates {
-            text-align: center;
-            color: var(--muted);
-            font-size: 13px;
-            padding: 20px;
+            text-align: center; color: var(--muted); font-size: 13px; padding: 16px;
         }
 
         .plate-add-row {
-            display: grid;
-            grid-template-columns: 1fr 1.5fr auto;
-            gap: 10px;
-            align-items: end;
-            margin-top: 12px;
+            display: grid; grid-template-columns: 1fr 1.5fr auto;
+            gap: 10px; align-items: end; margin-top: 10px;
         }
         @media (max-width: 600px) { .plate-add-row { grid-template-columns: 1fr; } }
 
-        .divider {
-            border: none;
-            border-top: 1px solid var(--border);
-            margin: 20px 0;
-        }
+        .divider { border: none; border-top: 1px solid var(--border); margin: 18px 0; }
 
         .yaml-block {
-            background: rgba(0,0,0,0.18);
+            background: rgba(0,0,0,0.12);
             border: 1px solid var(--border);
-            border-radius: 12px;
-            padding: 16px;
-            font-family: 'IBM Plex Mono', monospace;
-            font-size: 12px;
-            line-height: 1.7;
-            white-space: pre;
-            overflow-x: auto;
-            color: var(--text);
-            margin-top: 12px;
-            max-height: 340px;
-            overflow-y: auto;
+            border-radius: 10px;
+            padding: 14px; font-family: 'IBM Plex Mono', monospace;
+            font-size: 11px; line-height: 1.7; white-space: pre;
+            overflow-x: auto; color: var(--text); margin-top: 10px;
+            max-height: 320px; overflow-y: auto;
         }
+        .theme-dark .yaml-block { background: rgba(0,0,0,0.35); }
 
-        .theme-dark .yaml-block { background: rgba(0,0,0,0.4); }
-
-        .ha-tabs { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 4px; }
+        .ha-tabs { display: flex; flex-wrap: wrap; gap: 7px; margin-bottom: 4px; }
 
         .ha-tab {
-            padding: 6px 14px; border-radius: 999px; font-size: 12px; font-weight: 600;
+            padding: 5px 13px; border-radius: 999px; font-size: 12px; font-weight: 600;
             border: 1px solid var(--border); background: transparent; color: var(--muted);
-            cursor: pointer; transition: all 0.2s; font-family: inherit;
+            cursor: pointer; transition: all 0.15s; font-family: inherit;
         }
         .ha-tab.active {
-            background: rgba(91,124,250,0.16); color: var(--accent-strong);
-            border-color: rgba(91,124,250,0.5);
+            background: rgba(91,124,250,0.14); color: var(--accent-strong);
+            border-color: rgba(91,124,250,0.45);
         }
         .ha-tab:hover:not(.active) { border-color: rgba(91,124,250,0.3); }
 
         .copy-btn {
-            display: inline-flex; align-items: center; gap: 6px;
-            padding: 7px 14px; border-radius: 8px; font-size: 12px; font-weight: 600;
+            display: inline-flex; align-items: center; gap: 5px;
+            padding: 6px 13px; border-radius: 7px; font-size: 12px; font-weight: 600;
             border: 1px solid var(--border); background: transparent; color: var(--muted);
-            cursor: pointer; transition: all 0.2s; font-family: inherit; margin-top: 8px;
+            cursor: pointer; transition: all 0.15s; font-family: inherit; margin-top: 8px;
         }
         .copy-btn:hover { border-color: rgba(91,124,250,0.4); color: var(--accent-strong); }
         .copy-btn.copied { color: var(--success-color); border-color: var(--success-border); }
+
+        /* ── Mobile ── */
+        .mobile-header {
+            display: none; align-items: center; gap: 12px;
+            padding: 12px 16px; background: #0d1117;
+            position: sticky; top: 0; z-index: 150;
+            border-bottom: 1px solid rgba(255,255,255,0.06);
+        }
+
+        .hamburger {
+            background: none; border: none; cursor: pointer;
+            color: #c9d1d9; padding: 4px;
+            display: flex; align-items: center; justify-content: center;
+        }
+
+        .mobile-brand { font-size: 14px; font-weight: 700; color: #e6edf3; }
+
+        .sidebar-overlay {
+            display: none; position: fixed; inset: 0;
+            background: rgba(0,0,0,0.55); z-index: 190;
+        }
+
+        @media (max-width: 768px) {
+            .sidebar { transform: translateX(-100%); }
+            .sidebar.open { transform: translateX(0); }
+            .sidebar-overlay.open { display: block; }
+            .mobile-header { display: flex; }
+            .main-content { margin-left: 0; }
+            .page-header { padding: 12px 16px; }
+            .page { padding: 16px 16px 60px; }
+        }
     </style>
 </head>
 <body>
-<div class="page">
 
-    <div class="topbar">
-        <div class="title">
-            <span class="badge">ANPR</span>
-            <h1>Beállítások</h1>
+<div class="sidebar-overlay" id="sidebarOverlay" onclick="closeSidebar()"></div>
+
+<!-- Sidebar -->
+<aside class="sidebar" id="sidebar">
+    <div class="sidebar-brand">
+        <div class="brand-mark">A</div>
+        <div>
+            <div class="brand-title">ANPR</div>
+            <div class="brand-version">v{{ version }}</div>
         </div>
-        <div class="toolbar">
-            <div class="mqtt-status">
+    </div>
+
+    <nav class="sidebar-nav">
+        <a href="/vehicles" class="nav-item">
+            <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <line x1="8" y1="6" x2="21" y2="6"></line><line x1="8" y1="12" x2="21" y2="12"></line>
+                <line x1="8" y1="18" x2="21" y2="18"></line>
+                <circle cx="3.5" cy="6" r="1" fill="currentColor" stroke="none"></circle>
+                <circle cx="3.5" cy="12" r="1" fill="currentColor" stroke="none"></circle>
+                <circle cx="3.5" cy="18" r="1" fill="currentColor" stroke="none"></circle>
+            </svg>
+            <span>Események</span>
+        </a>
+        <a href="/stats" class="nav-item">
+            <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <line x1="18" y1="20" x2="18" y2="10"></line>
+                <line x1="12" y1="20" x2="12" y2="4"></line>
+                <line x1="6" y1="20" x2="6" y2="14"></line>
+                <line x1="2" y1="20" x2="22" y2="20"></line>
+            </svg>
+            <span>Statisztika</span>
+        </a>
+        <a href="/config" class="nav-item active">
+            <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <circle cx="12" cy="12" r="3"></circle>
+                <path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"></path>
+            </svg>
+            <span>Beállítások</span>
+        </a>
+    </nav>
+
+    <div class="sidebar-footer">
+        <div class="status-bar">
+            <div class="status-item">
                 <div class="status-dot" id="mqttDot"></div>
-                <span id="mqttStatusText">–</span>
+                <span id="mqttStatusText">MQTT</span>
             </div>
-            <a href="/vehicles" class="btn-back">← Vissza</a>
-            <a href="/stats" class="btn-back" title="Statisztika">📊</a>
-            <button class="btn btn-primary" id="saveBtnTop" onclick="saveConfig()" style="padding: 8px 16px; font-size: 13px;">💾 Mentés</button>
-            <div class="toast" id="saveToastTop" style="position:absolute;top:60px;right:12px;z-index:200;"></div>
-            <button class="btn-icon" id="themeToggle" type="button" title="Téma váltása">🌙</button>
+        </div>
+        <button class="theme-btn" id="themeToggle" type="button">
+            <svg id="themeIconMoon" width="13" height="13" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"></path>
+            </svg>
+            <svg id="themeIconSun" width="13" height="13" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" style="display:none">
+                <circle cx="12" cy="12" r="5"></circle>
+                <line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line>
+                <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                <line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line>
+                <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+            </svg>
+            <span id="themeLabel">Sötét mód</span>
+        </button>
+    </div>
+</aside>
+
+<!-- Mobile header -->
+<div class="mobile-header">
+    <button class="hamburger" onclick="openSidebar()">
+        <svg width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <line x1="3" y1="6" x2="21" y2="6"></line>
+            <line x1="3" y1="12" x2="21" y2="12"></line>
+            <line x1="3" y1="18" x2="21" y2="18"></line>
+        </svg>
+    </button>
+    <span class="mobile-brand">ANPR</span>
+</div>
+
+<!-- Main content -->
+<main class="main-content">
+
+    <div class="page-header">
+        <h1 class="page-title">Beállítások</h1>
+        <div class="page-toolbar">
+            <button class="btn btn-primary" id="saveBtnTop" onclick="saveConfig()" style="padding:8px 18px;font-size:13px;">Mentés</button>
+            <div class="toast" id="saveToastTop" style="position:absolute;top:60px;right:12px;z-index:300;"></div>
         </div>
     </div>
 
-    <!-- MQTT Kapcsolat -->
-    <div class="section">
-        <div class="section-title">⚡ MQTT Kapcsolat</div>
+    <div class="page">
 
-        <div class="field">
-            <div class="toggle-row">
-                <div class="toggle-label-group">
-                    <label>MQTT engedélyezése</label>
-                    <div class="help">Ha be van kapcsolva, minden felismeréskor JSON üzenetet küld a megadott broker felé.</div>
-                </div>
-                <label class="switch">
-                    <input type="checkbox" id="mqtt_enabled">
-                    <span class="slider"></span>
-                </label>
-            </div>
-        </div>
+        <!-- MQTT Kapcsolat -->
+        <div class="section">
+            <div class="section-title">MQTT Kapcsolat</div>
 
-        <div class="grid-2">
             <div class="field">
-                <label>Broker IP / Hostname</label>
-                <input class="input" type="text" id="mqtt_host" placeholder="pl. 192.168.0.10">
-                <div class="help">A Home Assistant gépe vagy önálló MQTT broker (pl. Mosquitto) IP-címe a hálózaton.</div>
-            </div>
-            <div class="field">
-                <label>Port</label>
-                <input class="input" type="number" id="mqtt_port" placeholder="1883">
-                <div class="help">Alapértelmezett: <strong>1883</strong> (titkosítatlan). TLS esetén általában <strong>8883</strong>.</div>
-            </div>
-        </div>
-
-        <div class="grid-2">
-            <div class="field">
-                <label>Felhasználónév <span style="font-weight:400;color:var(--muted)">(opcionális)</span></label>
-                <input class="input" type="text" id="mqtt_username" placeholder="mqtt_user" autocomplete="off">
-                <div class="help">Ha a broker autentikációt kér. HA-ban a <code>configuration.yaml</code>-ban vagy Mosquitto konfigban állítható.</div>
-            </div>
-            <div class="field">
-                <label>Jelszó <span style="font-weight:400;color:var(--muted)">(opcionális)</span></label>
-                <input class="input" type="password" id="mqtt_password" placeholder="••••••••" autocomplete="off">
-                <div class="help">Az MQTT felhasználóhoz tartozó jelszó. Nyílt brokernél üresen hagyható.</div>
-            </div>
-        </div>
-        <div class="action-row" style="margin-top:16px;">
-            <button class="btn btn-primary" onclick="saveConfig()" style="padding:8px 18px;font-size:13px;">💾 Mentés</button>
-            <div class="toast" id="saveToastMqtt"></div>
-        </div>
-    </div>
-
-    <!-- Topik beállítások -->
-    <div class="section">
-        <div class="section-title">📡 Topik beállítások</div>
-
-        <div class="field">
-            <label>Fő topik</label>
-            <input class="input" type="text" id="mqtt_topic" placeholder="anpr/event">
-            <div class="help">
-                Az MQTT topik, amire minden felismerés adata érkezik JSON formában. HA-ban erre a topikra kell feliratkozni.<br>
-                Példa payload: <code>{ "license_plate": "ABC-123", "known": true, "friendly_name": "Saját autó", "image_url": "http://..." }</code>
-            </div>
-        </div>
-
-        <hr class="divider">
-
-        <div class="field">
-            <div class="toggle-row">
-                <div class="toggle-label-group">
-                    <label>Retain flag</label>
-                    <div class="help">Ha be van kapcsolva, a broker megtartja az utolsó üzenetet. HA így mindig látja az utolsó rendszámot – akkor is, ha csak az esemény <em>után</em> iratkozik fel a topikra.</div>
-                </div>
-                <label class="switch">
-                    <input type="checkbox" id="mqtt_retain">
-                    <span class="slider"></span>
-                </label>
-            </div>
-        </div>
-
-        <div class="field">
-            <div class="toggle-row">
-                <div class="toggle-label-group">
-                    <label>Per-plate topik</label>
-                    <div class="help">
-                        Ha be van kapcsolva, rendszámonként külön topikra is küld üzenetet.<br>
-                        Pl. <code>anpr/plates/ABC-123</code> – hasznos, ha egy adott autóra (pl. kapu nyitás) külön HA automatizálást szeretnél trigger nélkül.
-                    </div>
-                </div>
-                <label class="switch">
-                    <input type="checkbox" id="mqtt_per_plate">
-                    <span class="slider"></span>
-                </label>
-            </div>
-        </div>
-        <div class="action-row" style="margin-top:16px;">
-            <button class="btn btn-primary" onclick="saveConfig()" style="padding:8px 18px;font-size:13px;">💾 Mentés</button>
-            <div class="toast" id="saveToastTopik"></div>
-        </div>
-    </div>
-
-    <!-- Home Assistant -->
-    <div class="section">
-        <div class="section-title">🏠 Home Assistant integráció</div>
-
-        <div class="field">
-            <div class="toggle-row">
-                <div class="toggle-label-group">
-                    <label>MQTT Discovery</label>
-                    <div class="help">
-                        Ha be van kapcsolva, az ANPR szenzor automatikusan megjelenik HA-ban – nem kell kézzel konfigurálni semmit.<br>
-                        HA-ban a <em>Beállítások → Eszközök és szolgáltatások → MQTT</em> alatt jelenik meg az <strong>ANPR Rendszer</strong> eszköz egy <em>Utolsó rendszám</em> szenzorral.
-                    </div>
-                </div>
-                <label class="switch">
-                    <input type="checkbox" id="mqtt_discovery">
-                    <span class="slider"></span>
-                </label>
-            </div>
-        </div>
-
-        <div class="field">
-            <label>Discovery prefix</label>
-            <input class="input" type="text" id="mqtt_discovery_prefix" placeholder="homeassistant">
-            <div class="help">Alapértelmezett: <code>homeassistant</code>. Csak akkor módosítsd, ha HA-ban egyedi <code>mqtt: discovery_prefix</code> értéket állítottál be a konfigurációban.</div>
-        </div>
-
-        <div class="field">
-            <label>Alap URL <span style="font-weight:400;color:var(--muted)">(képek eléréséhez)</span></label>
-            <input class="input" type="text" id="mqtt_base_url" placeholder="http://192.168.0.136:5555">
-            <div class="help">
-                A Pi elérési címe a hálózaton. Az MQTT payload-ban a kép mezőnél teljes URL-t küld, pl. <code>http://192.168.0.136:5555/received_images/abc.jpg</code>.<br>
-                HA-ban ez <em>Kép kártya</em> segítségével megjeleníthető egy dashboardon.
-            </div>
-        </div>
-    </div>
-
-    <!-- Automatikus frissítés -->
-    <div class="section">
-        <div class="section-title">🔄 Automatikus frissítés</div>
-
-        <div class="field">
-            <div class="toggle-row">
-                <div class="toggle-label-group">
-                    <label>Automatikus frissítés</label>
-                    <div class="help">Ha be van kapcsolva, az eseménylista automatikusan újratöltődik a megadott időközönként. Hasznos, ha folyamatosan figyeled a kamera eseményeit.</div>
-                </div>
-                <label class="switch">
-                    <input type="checkbox" id="auto_refresh">
-                    <span class="slider"></span>
-                </label>
-            </div>
-        </div>
-
-        <div class="field">
-            <label>Frissítési időköz <span style="font-weight:400;color:var(--muted)">(másodperc)</span></label>
-            <input class="input" type="number" id="auto_refresh_interval" placeholder="30" min="5" max="3600">
-            <div class="help">Minimum <strong>5 másodperc</strong>. Ajánlott: <strong>30</strong> normál használathoz, <strong>10</strong> aktív figyeléshez. Túl kis érték feleslegesen terheli a szervert.</div>
-        </div>
-
-        <div class="field">
-            <label>Események száma oldalanként</label>
-            <input class="input" type="number" id="events_per_page" placeholder="100" min="10" max="1000">
-            <div class="help">Mennyi eseményt töltjön be egyszerre az eseménylistán. Kisebb szám = gyorsabb betöltés. Ajánlott: <strong>50–200</strong>. A többi esemény a „Több betöltése" gombbal érhető el.</div>
-        </div>
-    </div>
-
-    <!-- Kép tárolás -->
-    <div class="section">
-        <div class="section-title">🖼️ Kép tárolás</div>
-        <div class="help" style="margin-bottom:16px;">
-            A kamera által készített képek automatikus törlésének szabályai. Ha mindkét limit be van állítva, mindkettő érvényesül. A <strong>0</strong> érték azt jelenti, hogy az adott limit nincs alkalmazva.
-        </div>
-
-        <div class="grid-2">
-            <div class="field">
-                <label>Megőrzési idő <span style="font-weight:400;color:var(--muted)">(nap)</span></label>
-                <input class="input" type="number" id="image_max_days" placeholder="0" min="0">
-                <div class="help">Ennyi napnál régebbi képeket törli a rendszer. Pl. <strong>30</strong> = egy hónapnál régebbi képek automatikusan törlődnek. <strong>0</strong> = nem töröl kor alapján.</div>
-            </div>
-            <div class="field">
-                <label>Maximum képszám</label>
-                <input class="input" type="number" id="image_max_count" placeholder="0" min="0">
-                <div class="help">Ha ennél több kép van tárolva, a legrégebbieket törli. Pl. <strong>500</strong> = mindig csak a legutóbbi 500 kép marad meg. <strong>0</strong> = nincs darabszám limit.</div>
-            </div>
-        </div>
-
-        <div class="action-row" style="margin-top: 12px;">
-            <button class="btn btn-primary" onclick="saveConfig()">💾 Mentés</button>
-            <button class="btn btn-secondary" id="cleanupBtn" onclick="runCleanup()">🧹 Azonnali takarítás</button>
-            <div class="toast" id="cleanupToast"></div>
-            <div id="storageInfo" style="font-size:13px;color:var(--muted);"></div>
-        </div>
-    </div>
-
-    <!-- Webhook -->
-    <div class="section">
-        <div class="section-title">🔗 Webhook – Ismert rendszámok</div>
-        <div class="help" style="margin-bottom:16px;">
-            Ismert rendszám észlelésekor HTTP POST kérést küld a megadott URL-ekre JSON payload-dal (ugyanaz mint az MQTT üzenet). Kiválóan alkalmas Home Assistant webhook automatizálásokhoz.
-            <br>HA webhook URL formátuma: <code>http://&lt;HA_IP&gt;:8123/api/webhook/&lt;webhook_id&gt;</code>
-        </div>
-
-        <div class="field">
-            <div class="toggle-row">
-                <div class="toggle-label-group">
-                    <label>Webhook engedélyezése</label>
-                    <div class="help">Ha be van kapcsolva, az alábbi URL-ekre POST kérést küld minden releváns észlelésnél.</div>
-                </div>
-                <label class="switch">
-                    <input type="checkbox" id="webhook_enabled">
-                    <span class="slider"></span>
-                </label>
-            </div>
-        </div>
-
-        <div class="field">
-            <label>Érkezés webhook URL</label>
-            <input class="input" type="text" id="webhook_known_arrival_url" placeholder="http://192.168.0.x:8123/api/webhook/anpr_erkezes">
-            <div class="help">
-                Ismert rendszám + érkezés irány (<code>approaching</code>, <code>forward</code>) esetén hívja meg.<br>
-                HA-ban: <em>Automatizálások → Webhookkal aktiválva</em> → add meg ugyanezt az ID-t.
-            </div>
-        </div>
-
-        <div class="field">
-            <label>Távozás webhook URL</label>
-            <input class="input" type="text" id="webhook_known_departure_url" placeholder="http://192.168.0.x:8123/api/webhook/anpr_tavozas">
-            <div class="help">
-                Ismert rendszám + távozás irány (<code>away</code>, <code>reverse</code>) esetén hívja meg.<br>
-                Pl. kapu automatikus záráshoz, vagy napló bejegyzéshez.
-            </div>
-        </div>
-
-        <div class="field">
-            <label>Ismeretlen rendszám webhook URL <span style="font-weight:400;color:var(--muted)">(opcionális)</span></label>
-            <input class="input" type="text" id="webhook_unknown_url" placeholder="http://192.168.0.x:8123/api/webhook/anpr_ismeretlen">
-            <div class="help">
-                Akkor aktiválódik, ha a kamera <em>nem ismert</em> rendszámot azonosít. Hasznos biztonsági riasztáshoz – pl. értesítés küldése HA-on keresztül, ha ismeretlen autó parkol be.
-            </div>
-        </div>
-
-        <div class="action-row" style="margin-top:16px;">
-            <button class="btn btn-primary" onclick="saveConfig()" style="padding:8px 18px;font-size:13px;">💾 Mentés</button>
-            <div class="toast" id="saveToastWebhook"></div>
-        </div>
-    </div>
-
-    <!-- E-mail értesítés -->
-    <div class="section">
-        <div class="section-title">📧 E-mail értesítés</div>
-        <div class="help" style="margin-bottom:16px;">
-            Rendszám észleléskor e-mailt küld a megadott SMTP szerveren keresztül. Képmelléklettel is küldhet.
-            Gmail esetén: host <code>smtp.gmail.com</code>, port <code>587</code>, és engedélyezd az
-            <a href="https://myaccount.google.com/apppasswords" target="_blank" style="color:var(--accent-strong);">App jelszót</a>.
-        </div>
-
-        <div class="field">
-            <div class="toggle-row">
-                <div class="toggle-label-group">
-                    <label>E-mail értesítés engedélyezése</label>
-                    <div class="help">Ha be van kapcsolva, minden egyező eseménynél e-mailt küld.</div>
-                </div>
-                <label class="switch">
-                    <input type="checkbox" id="email_enabled">
-                    <span class="slider"></span>
-                </label>
-            </div>
-        </div>
-
-        <div class="grid-2">
-            <div class="field">
-                <label>SMTP szerver</label>
-                <input class="input" type="text" id="email_smtp_host" placeholder="smtp.gmail.com">
-            </div>
-            <div class="field">
-                <label>SMTP port</label>
-                <input class="input" type="number" id="email_smtp_port" placeholder="587" min="1" max="65535">
-            </div>
-        </div>
-
-        <div class="grid-2">
-            <div class="field">
-                <label>SMTP felhasználónév</label>
-                <input class="input" type="text" id="email_smtp_user" placeholder="felhasznalo@gmail.com" autocomplete="off">
-            </div>
-            <div class="field">
-                <label>SMTP jelszó / App jelszó</label>
-                <input class="input" type="password" id="email_smtp_password" placeholder="••••••••••••" autocomplete="off">
-            </div>
-        </div>
-
-        <div class="grid-2">
-            <div class="field">
-                <label>Feladó e-mail <span style="font-weight:400;color:var(--muted)">(opcionális)</span></label>
-                <input class="input" type="email" id="email_from" placeholder="anpr@domain.com">
-                <div class="help">Üresen hagyva a felhasználónevet használja.</div>
-            </div>
-            <div class="field">
-                <label>Címzett(ek)</label>
-                <input class="input" type="text" id="email_to" placeholder="te@gmail.com, masik@gmail.com">
-                <div class="help">Több cím vesszővel elválasztva.</div>
-            </div>
-        </div>
-
-        <div class="grid-2">
-            <div class="field">
-                <label>Mikor küldjön értesítést?</label>
-                <select class="input" id="email_trigger">
-                    <option value="unknown">Csak ismeretlen rendszámnál</option>
-                    <option value="known">Csak ismert rendszámnál</option>
-                    <option value="all">Minden eseménynél</option>
-                </select>
-            </div>
-            <div class="field">
-                <label>Képmelléklet</label>
-                <div class="toggle-row" style="margin-top:8px;">
+                <div class="toggle-row">
                     <div class="toggle-label-group">
-                        <div class="help">A kamerakép csatolmányként is megérkezik.</div>
+                        <label>MQTT engedélyezése</label>
+                        <div class="help">Ha be van kapcsolva, minden felismeréskor JSON üzenetet küld a megadott broker felé.</div>
                     </div>
                     <label class="switch">
-                        <input type="checkbox" id="email_attach_image">
+                        <input type="checkbox" id="mqtt_enabled">
                         <span class="slider"></span>
                     </label>
                 </div>
             </div>
-        </div>
 
-        <div class="action-row" style="margin-top:16px;">
-            <button class="btn btn-primary" onclick="saveConfig()" style="padding:8px 18px;font-size:13px;">💾 Mentés</button>
-            <button class="btn btn-secondary" id="testEmailBtn" onclick="testEmail()">📧 Teszt e-mail küldése</button>
-            <div class="toast" id="emailToast"></div>
-        </div>
-    </div>
-
-    <!-- Kapu / Relé -->
-    <div class="section">
-        <div class="section-title">🚪 Kapu / Relé triggerelés</div>
-        <div class="help" style="margin-bottom:16px;">
-            Ismert rendszám észlelésekor közvetlenül meghív egy HTTP végpontot – pl. Shelly relét a kapu nyitásához.<br>
-            <strong>Shelly Gen1</strong> (Shelly 1, 1PM, 2, 2.5): <code>http://&lt;shelly_ip&gt;/relay/0?turn=on</code> → módszer: <code>GET</code><br>
-            <strong>Shelly Gen2+</strong> (Plus 1, Plus 1PM, Pro): <code>http://&lt;shelly_ip&gt;/rpc/Switch.Set</code> → módszer: <code>POST</code>, törzs: <code>{"id":0,"on":true}</code><br>
-            A rendszer <em>nem</em> küld ANPR adatot – csak a megadott törzset küldi, így Shelly kompatibilis.
-        </div>
-
-        <div class="field">
-            <div class="toggle-row">
-                <div class="toggle-label-group">
-                    <label>Relé triggerelés engedélyezése</label>
-                    <div class="help">Ha be van kapcsolva, ismert rendszám észlelésekor meghívja a megadott relé URL-t.</div>
+            <div class="grid-2">
+                <div class="field">
+                    <label>Broker IP / Hostname</label>
+                    <input class="input" type="text" id="mqtt_host" placeholder="pl. 192.168.0.10">
+                    <div class="help">A Home Assistant gépe vagy önálló MQTT broker (pl. Mosquitto) IP-címe.</div>
                 </div>
-                <label class="switch">
-                    <input type="checkbox" id="relay_enabled">
-                    <span class="slider"></span>
-                </label>
-            </div>
-        </div>
-
-        <div class="field">
-            <label>Relé URL</label>
-            <input class="input" type="text" id="relay_url" placeholder="pl. http://192.168.0.50/relay/0?turn=on">
-            <div class="help">A Shelly (vagy más relé) végpontjának URL-je. Shelly Gen1-nél a GET URL a fenti formátumban.</div>
-        </div>
-
-        <div class="grid-2">
-            <div class="field">
-                <label>HTTP módszer</label>
-                <select class="input" id="relay_method">
-                    <option value="GET">GET (Shelly Gen1)</option>
-                    <option value="POST">POST (Shelly Gen2+)</option>
-                </select>
-                <div class="help">Gen1 esetén <code>GET</code>, Gen2+ esetén <code>POST</code>.</div>
-            </div>
-            <div class="field">
-                <label>Triggerelés iránya</label>
-                <select class="input" id="relay_trigger_on">
-                    <option value="arrival">Csak érkezéskor</option>
-                    <option value="departure">Csak távozáskor</option>
-                    <option value="both">Mindkét irányban</option>
-                </select>
-                <div class="help">Mikor nyisson kaput: csak bejövő autónál, csak kimenőnél, vagy mindkettőnél.</div>
-            </div>
-        </div>
-
-        <div class="field" id="relayBodyField">
-            <label>POST törzs <span style="font-weight:400;color:var(--muted)">(csak POST módszernél)</span></label>
-            <input class="input" type="text" id="relay_body" placeholder='{"id":0,"on":true}'>
-            <div class="help">
-                Shelly Gen2+ esetén: <code>{"id":0,"on":true}</code><br>
-                Shelly Gen2+ auto-off (pl. 2 mp után zár): <code>{"id":0,"on":true,"toggle_after":2}</code>
-            </div>
-        </div>
-    </div>
-
-    <!-- Mentés + teszt -->
-    <div class="action-row">
-        <button class="btn btn-primary" id="saveBtn" onclick="saveConfig()">💾 Mentés</button>
-        <button class="btn btn-secondary" id="testBtn" onclick="testMqtt()">🔌 Kapcsolat tesztelése</button>
-        <div class="toast" id="saveToast"></div>
-        <div class="toast" id="testToast"></div>
-    </div>
-
-    <!-- Home Assistant konfiguráció -->
-    <div class="section" style="margin-top: 20px;">
-        <div class="section-title">🏠 Home Assistant konfiguráció</div>
-        <div class="help" style="margin-bottom: 16px;">
-            Másold be az alábbi YAML-t a Home Assistant konfigurációjába. A generált kód mindig a jelenlegi beállításaidat tükrözi — ha változtatsz valamit fentebb, mentés után frissül.
-        </div>
-
-        <!-- Snapshot URL box -->
-        <div style="background:rgba(91,124,250,0.07);border:1px solid rgba(91,124,250,0.25);border-radius:12px;padding:14px 16px;margin-bottom:18px;">
-            <div style="font-size:12px;font-weight:600;color:var(--accent-strong);margin-bottom:8px;">📷 Kamera snapshot URL (mindig az utolsó kép)</div>
-            <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
-                <code id="snapshotUrlDisplay" style="font-family:'IBM Plex Mono',monospace;font-size:12px;background:rgba(0,0,0,0.08);padding:6px 10px;border-radius:7px;flex:1;word-break:break-all;"></code>
-                <button onclick="copySnapshotUrl()" class="copy-btn" id="snapshotCopyBtn" style="white-space:nowrap;">📋 Másolás</button>
-            </div>
-            <div style="font-size:11px;color:var(--muted);margin-top:6px;">Per-kamera: URL + <code>?ip=192.168.0.x</code> — Auth: admin / beállított jelszó</div>
-        </div>
-
-        <div class="ha-tabs">
-            <button class="ha-tab active" onclick="showHaTab('mqtt', this)">MQTT szenzor</button>
-            <button class="ha-tab" onclick="showHaTab('rest', this)">REST szenzor</button>
-            <button class="ha-tab" onclick="showHaTab('webhook', this)">Webhook automáció</button>
-            <button class="ha-tab" onclick="showHaTab('dashboard', this)">Dashboard kártya</button>
-            <button class="ha-tab" onclick="showHaTab('camera', this)">📷 Kamera stream</button>
-        </div>
-
-        <pre class="yaml-block" id="haYamlOutput"></pre>
-
-        <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;">
-            <button class="copy-btn" id="copyBtn" onclick="copyHaYaml()">📋 Másolás vágólapra</button>
-            <div class="help" id="haTabHelp" style="margin:0;"></div>
-        </div>
-    </div>
-
-    <!-- Kamerák -->
-    <div class="section" style="margin-top: 20px;">
-        <div class="section-title">📷 Kamerák kezelése</div>
-        <div class="help" style="margin-bottom: 16px;">
-            A kamerák IP-cím alapján azonosítódnak. Minden kamerához beállíthatsz egyedi relé triggert —
-            pl. a bejárati kamera nyissa a kaput, a garázskamera egy másik relét hívjon.<br>
-            Ha nincs per-kamera relé beállítva, a globális Kapu/Relé konfig érvényesül fallbackként.
-        </div>
-
-        <div class="plates-list" id="camerasList"></div>
-
-        <hr class="divider">
-        <div style="font-size:13px;font-weight:600;margin-bottom:12px;">Új kamera hozzáadása</div>
-
-        <div class="grid-2">
-            <div class="field">
-                <label>IP cím</label>
-                <input class="input" type="text" id="newCameraIp" placeholder="pl. 192.168.0.101">
-            </div>
-            <div class="field">
-                <label>Megnevezés</label>
-                <input class="input" type="text" id="newCameraName" placeholder="pl. Bejárati kapu">
-            </div>
-        </div>
-
-        <div class="field">
-            <div class="toggle-row">
-                <div class="toggle-label-group">
-                    <label>Per-kamera relé triggerelés</label>
-                    <div class="help">Ha be van kapcsolva, ez a kamera saját relé URL-t hív – felülírja a globális beállítást.</div>
+                <div class="field">
+                    <label>Port</label>
+                    <input class="input" type="number" id="mqtt_port" placeholder="1883">
+                    <div class="help">Alapértelmezett: <strong>1883</strong>. TLS esetén általában <strong>8883</strong>.</div>
                 </div>
-                <label class="switch">
-                    <input type="checkbox" id="newCameraRelayEnabled" onchange="updateNewCameraRelayVisibility()">
-                    <span class="slider"></span>
-                </label>
+            </div>
+
+            <div class="grid-2">
+                <div class="field">
+                    <label>Felhasználónév <span style="font-weight:400;color:var(--muted)">(opcionális)</span></label>
+                    <input class="input" type="text" id="mqtt_username" placeholder="mqtt_user" autocomplete="off">
+                </div>
+                <div class="field">
+                    <label>Jelszó <span style="font-weight:400;color:var(--muted)">(opcionális)</span></label>
+                    <input class="input" type="password" id="mqtt_password" placeholder="••••••••" autocomplete="off">
+                </div>
+            </div>
+            <div class="action-row" style="margin-top:14px;">
+                <button class="btn btn-primary" onclick="saveConfig()" style="padding:7px 16px;font-size:13px;">Mentés</button>
+                <div class="toast" id="saveToastMqtt"></div>
             </div>
         </div>
 
-        <div id="newCameraRelayFields" style="display:none;">
+        <!-- Topik beállítások -->
+        <div class="section">
+            <div class="section-title">Topik beállítások</div>
+
+            <div class="field">
+                <label>Fő topik</label>
+                <input class="input" type="text" id="mqtt_topic" placeholder="anpr/event">
+                <div class="help">
+                    Az MQTT topik, amire minden felismerés adata érkezik JSON formában.<br>
+                    Példa: <code>{ "license_plate": "ABC-123", "known": true, "friendly_name": "Saját autó", "image_url": "http://..." }</code>
+                </div>
+            </div>
+
+            <hr class="divider">
+
+            <div class="field">
+                <div class="toggle-row">
+                    <div class="toggle-label-group">
+                        <label>Retain flag</label>
+                        <div class="help">Ha be van kapcsolva, a broker megtartja az utolsó üzenetet. HA így mindig látja az utolsó rendszámot.</div>
+                    </div>
+                    <label class="switch">
+                        <input type="checkbox" id="mqtt_retain">
+                        <span class="slider"></span>
+                    </label>
+                </div>
+            </div>
+
+            <div class="field">
+                <div class="toggle-row">
+                    <div class="toggle-label-group">
+                        <label>Per-plate topik</label>
+                        <div class="help">
+                            Ha be van kapcsolva, rendszámonként külön topikra is küld üzenetet.<br>
+                            Pl. <code>anpr/plates/ABC-123</code>
+                        </div>
+                    </div>
+                    <label class="switch">
+                        <input type="checkbox" id="mqtt_per_plate">
+                        <span class="slider"></span>
+                    </label>
+                </div>
+            </div>
+            <div class="action-row" style="margin-top:14px;">
+                <button class="btn btn-primary" onclick="saveConfig()" style="padding:7px 16px;font-size:13px;">Mentés</button>
+                <div class="toast" id="saveToastTopik"></div>
+            </div>
+        </div>
+
+        <!-- Home Assistant integráció -->
+        <div class="section">
+            <div class="section-title">Home Assistant integráció</div>
+
+            <div class="field">
+                <div class="toggle-row">
+                    <div class="toggle-label-group">
+                        <label>MQTT Discovery</label>
+                        <div class="help">
+                            Ha be van kapcsolva, az ANPR szenzor automatikusan megjelenik HA-ban.<br>
+                            <em>Beállítások → Eszközök és szolgáltatások → MQTT</em> alatt jelenik meg az <strong>ANPR Rendszer</strong> eszköz.
+                        </div>
+                    </div>
+                    <label class="switch">
+                        <input type="checkbox" id="mqtt_discovery">
+                        <span class="slider"></span>
+                    </label>
+                </div>
+            </div>
+
+            <div class="field">
+                <label>Discovery prefix</label>
+                <input class="input" type="text" id="mqtt_discovery_prefix" placeholder="homeassistant">
+                <div class="help">Alapértelmezett: <code>homeassistant</code>.</div>
+            </div>
+
+            <div class="field">
+                <label>Alap URL <span style="font-weight:400;color:var(--muted)">(képek eléréséhez)</span></label>
+                <input class="input" type="text" id="mqtt_base_url" placeholder="http://192.168.0.136:5555">
+                <div class="help">
+                    A Pi elérési címe a hálózaton. Az MQTT payload-ban a kép mezőnél teljes URL-t küld.
+                </div>
+            </div>
+        </div>
+
+        <!-- Automatikus frissítés -->
+        <div class="section">
+            <div class="section-title">Automatikus frissítés</div>
+
+            <div class="field">
+                <div class="toggle-row">
+                    <div class="toggle-label-group">
+                        <label>Automatikus frissítés</label>
+                        <div class="help">Ha be van kapcsolva, az eseménylista automatikusan újratöltődik a megadott időközönként.</div>
+                    </div>
+                    <label class="switch">
+                        <input type="checkbox" id="auto_refresh">
+                        <span class="slider"></span>
+                    </label>
+                </div>
+            </div>
+
+            <div class="field">
+                <label>Frissítési időköz <span style="font-weight:400;color:var(--muted)">(másodperc)</span></label>
+                <input class="input" type="number" id="auto_refresh_interval" placeholder="30" min="5" max="3600">
+                <div class="help">Minimum <strong>5 másodperc</strong>. Ajánlott: <strong>30</strong>.</div>
+            </div>
+
+            <div class="field">
+                <label>Események száma oldalanként</label>
+                <input class="input" type="number" id="events_per_page" placeholder="100" min="10" max="1000">
+                <div class="help">Mennyi eseményt töltjön be egyszerre. Ajánlott: <strong>50–200</strong>.</div>
+            </div>
+        </div>
+
+        <!-- Kép tárolás -->
+        <div class="section">
+            <div class="section-title">Kép tárolás</div>
+            <div class="help" style="margin-bottom:14px;">
+                A kamera által készített képek automatikus törlésének szabályai. A <strong>0</strong> érték azt jelenti, hogy az adott limit nincs alkalmazva.
+            </div>
+
+            <div class="grid-2">
+                <div class="field">
+                    <label>Megőrzési idő <span style="font-weight:400;color:var(--muted)">(nap)</span></label>
+                    <input class="input" type="number" id="image_max_days" placeholder="0" min="0">
+                    <div class="help">Ennyi napnál régebbi képeket törli. <strong>0</strong> = nincs kor alapú törlés.</div>
+                </div>
+                <div class="field">
+                    <label>Maximum képszám</label>
+                    <input class="input" type="number" id="image_max_count" placeholder="0" min="0">
+                    <div class="help">Ha ennél több kép van, a legrégebbieket törli. <strong>0</strong> = nincs limit.</div>
+                </div>
+            </div>
+
+            <div class="action-row" style="margin-top:12px;">
+                <button class="btn btn-primary" onclick="saveConfig()">Mentés</button>
+                <button class="btn btn-secondary" id="cleanupBtn" onclick="runCleanup()">Azonnali takarítás</button>
+                <div class="toast" id="cleanupToast"></div>
+                <div id="storageInfo" style="font-size:12px;color:var(--muted);"></div>
+            </div>
+        </div>
+
+        <!-- Webhook -->
+        <div class="section">
+            <div class="section-title">Webhook – Ismert rendszámok</div>
+            <div class="help" style="margin-bottom:14px;">
+                Ismert rendszám észlelésekor HTTP POST kérést küld a megadott URL-ekre JSON payload-dal.<br>
+                HA webhook URL: <code>http://&lt;HA_IP&gt;:8123/api/webhook/&lt;webhook_id&gt;</code>
+            </div>
+
+            <div class="field">
+                <div class="toggle-row">
+                    <div class="toggle-label-group">
+                        <label>Webhook engedélyezése</label>
+                        <div class="help">Ha be van kapcsolva, POST kérést küld minden releváns észlelésnél.</div>
+                    </div>
+                    <label class="switch">
+                        <input type="checkbox" id="webhook_enabled">
+                        <span class="slider"></span>
+                    </label>
+                </div>
+            </div>
+
+            <div class="field">
+                <label>Érkezés webhook URL</label>
+                <input class="input" type="text" id="webhook_known_arrival_url" placeholder="http://192.168.0.x:8123/api/webhook/anpr_erkezes">
+                <div class="help">Ismert rendszám + érkezés irány esetén hívja meg.</div>
+            </div>
+
+            <div class="field">
+                <label>Távozás webhook URL</label>
+                <input class="input" type="text" id="webhook_known_departure_url" placeholder="http://192.168.0.x:8123/api/webhook/anpr_tavozas">
+            </div>
+
+            <div class="field">
+                <label>Ismeretlen rendszám webhook URL <span style="font-weight:400;color:var(--muted)">(opcionális)</span></label>
+                <input class="input" type="text" id="webhook_unknown_url" placeholder="http://192.168.0.x:8123/api/webhook/anpr_ismeretlen">
+            </div>
+
+            <div class="action-row" style="margin-top:14px;">
+                <button class="btn btn-primary" onclick="saveConfig()" style="padding:7px 16px;font-size:13px;">Mentés</button>
+                <div class="toast" id="saveToastWebhook"></div>
+            </div>
+        </div>
+
+        <!-- E-mail értesítés -->
+        <div class="section">
+            <div class="section-title">E-mail értesítés</div>
+            <div class="help" style="margin-bottom:14px;">
+                Rendszám észleléskor e-mailt küld a megadott SMTP szerveren keresztül.
+                Gmail esetén: host <code>smtp.gmail.com</code>, port <code>587</code>, és engedélyezd az
+                <a href="https://myaccount.google.com/apppasswords" target="_blank" style="color:var(--accent-strong);">App jelszót</a>.
+            </div>
+
+            <div class="field">
+                <div class="toggle-row">
+                    <div class="toggle-label-group">
+                        <label>E-mail értesítés engedélyezése</label>
+                        <div class="help">Ha be van kapcsolva, minden egyező eseménynél e-mailt küld.</div>
+                    </div>
+                    <label class="switch">
+                        <input type="checkbox" id="email_enabled">
+                        <span class="slider"></span>
+                    </label>
+                </div>
+            </div>
+
+            <div class="grid-2">
+                <div class="field">
+                    <label>SMTP szerver</label>
+                    <input class="input" type="text" id="email_smtp_host" placeholder="smtp.gmail.com">
+                </div>
+                <div class="field">
+                    <label>SMTP port</label>
+                    <input class="input" type="number" id="email_smtp_port" placeholder="587" min="1" max="65535">
+                </div>
+            </div>
+
+            <div class="grid-2">
+                <div class="field">
+                    <label>SMTP felhasználónév</label>
+                    <input class="input" type="text" id="email_smtp_user" placeholder="felhasznalo@gmail.com" autocomplete="off">
+                </div>
+                <div class="field">
+                    <label>SMTP jelszó / App jelszó</label>
+                    <input class="input" type="password" id="email_smtp_password" placeholder="••••••••••••" autocomplete="off">
+                </div>
+            </div>
+
+            <div class="grid-2">
+                <div class="field">
+                    <label>Feladó e-mail <span style="font-weight:400;color:var(--muted)">(opcionális)</span></label>
+                    <input class="input" type="email" id="email_from" placeholder="anpr@domain.com">
+                    <div class="help">Üresen hagyva a felhasználónevet használja.</div>
+                </div>
+                <div class="field">
+                    <label>Címzett(ek)</label>
+                    <input class="input" type="text" id="email_to" placeholder="te@gmail.com, masik@gmail.com">
+                    <div class="help">Több cím vesszővel elválasztva.</div>
+                </div>
+            </div>
+
+            <div class="grid-2">
+                <div class="field">
+                    <label>Mikor küldjön értesítést?</label>
+                    <select class="input" id="email_trigger">
+                        <option value="unknown">Csak ismeretlen rendszámnál</option>
+                        <option value="known">Csak ismert rendszámnál</option>
+                        <option value="all">Minden eseménynél</option>
+                    </select>
+                </div>
+                <div class="field">
+                    <label>Képmelléklet</label>
+                    <div class="toggle-row" style="margin-top:8px;">
+                        <div class="toggle-label-group">
+                            <div class="help">A kamerakép csatolmányként is megérkezik.</div>
+                        </div>
+                        <label class="switch">
+                            <input type="checkbox" id="email_attach_image">
+                            <span class="slider"></span>
+                        </label>
+                    </div>
+                </div>
+            </div>
+
+            <div class="action-row" style="margin-top:14px;">
+                <button class="btn btn-primary" onclick="saveConfig()" style="padding:7px 16px;font-size:13px;">Mentés</button>
+                <button class="btn btn-secondary" id="testEmailBtn" onclick="testEmail()">Teszt e-mail küldése</button>
+                <div class="toast" id="emailToast"></div>
+            </div>
+        </div>
+
+        <!-- Kapu / Relé -->
+        <div class="section">
+            <div class="section-title">Kapu / Relé triggerelés</div>
+            <div class="help" style="margin-bottom:14px;">
+                Ismert rendszám észlelésekor közvetlenül meghív egy HTTP végpontot – pl. Shelly relét.<br>
+                <strong>Shelly Gen1</strong>: <code>http://&lt;shelly_ip&gt;/relay/0?turn=on</code> → módszer: <code>GET</code><br>
+                <strong>Shelly Gen2+</strong>: <code>http://&lt;shelly_ip&gt;/rpc/Switch.Set</code> → módszer: <code>POST</code>, törzs: <code>{"id":0,"on":true}</code>
+            </div>
+
+            <div class="field">
+                <div class="toggle-row">
+                    <div class="toggle-label-group">
+                        <label>Relé triggerelés engedélyezése</label>
+                        <div class="help">Ismert rendszám észlelésekor meghívja a megadott relé URL-t.</div>
+                    </div>
+                    <label class="switch">
+                        <input type="checkbox" id="relay_enabled">
+                        <span class="slider"></span>
+                    </label>
+                </div>
+            </div>
+
             <div class="field">
                 <label>Relé URL</label>
-                <input class="input" type="text" id="newCameraRelayUrl" placeholder="pl. http://192.168.0.50/relay/0?turn=on">
-                <div class="help">Shelly Gen1: <code>http://&lt;shelly_ip&gt;/relay/0?turn=on</code> (GET) &nbsp;|&nbsp; Shelly Gen2+: <code>http://&lt;shelly_ip&gt;/rpc/Switch.Set</code> (POST)</div>
+                <input class="input" type="text" id="relay_url" placeholder="pl. http://192.168.0.50/relay/0?turn=on">
             </div>
+
             <div class="grid-2">
                 <div class="field">
                     <label>HTTP módszer</label>
-                    <select class="input" id="newCameraRelayMethod" onchange="updateNewCameraBodyVisibility()">
+                    <select class="input" id="relay_method">
                         <option value="GET">GET (Shelly Gen1)</option>
                         <option value="POST">POST (Shelly Gen2+)</option>
                     </select>
                 </div>
                 <div class="field">
                     <label>Triggerelés iránya</label>
-                    <select class="input" id="newCameraRelayTriggerOn">
+                    <select class="input" id="relay_trigger_on">
                         <option value="arrival">Csak érkezéskor</option>
                         <option value="departure">Csak távozáskor</option>
                         <option value="both">Mindkét irányban</option>
                     </select>
                 </div>
             </div>
-            <div class="field" id="newCameraBodyField">
-                <label>POST törzs</label>
-                <input class="input" type="text" id="newCameraRelayBody" value='{"id":0,"on":true}'>
-                <div class="help">Shelly Gen2+: <code>{"id":0,"on":true}</code> &nbsp;|&nbsp; Auto-off 3 mp: <code>{"id":0,"on":true,"toggle_after":3}</code></div>
+
+            <div class="field" id="relayBodyField">
+                <label>POST törzs <span style="font-weight:400;color:var(--muted)">(csak POST módszernél)</span></label>
+                <input class="input" type="text" id="relay_body" placeholder='{"id":0,"on":true}'>
+                <div class="help">
+                    Shelly Gen2+: <code>{"id":0,"on":true}</code> &nbsp;|&nbsp; Auto-off 2 mp: <code>{"id":0,"on":true,"toggle_after":2}</code>
+                </div>
             </div>
         </div>
 
-        <div class="action-row" style="margin-top:8px;">
-            <button class="btn btn-primary" onclick="addCamera()">+ Hozzáad</button>
-        </div>
-        <div class="toast" id="cameraToast" style="margin-top: 10px;"></div>
-    </div>
-
-    <!-- Ismert rendszámok -->
-    <div class="section" style="margin-top: 20px;">
-        <div class="section-title">🚗 Ismert rendszámok</div>
-        <div class="help" style="margin-bottom: 16px;">
-            Az itt felvett rendszámokhoz nevet rendelhetsz. Ha a kamera felismer egy ismert rendszámot, az MQTT payload-ban a <code>friendly_name</code> és a <code>"known": true</code> mező is szerepel.<br>
-            HA-ban ezzel feltétel-alapú automatizálást tudsz készíteni – pl. kapu nyitása csak ismerős autónál, értesítés ismeretlen rendszámnál.
+        <!-- Mentés + MQTT teszt -->
+        <div class="action-row">
+            <button class="btn btn-primary" id="saveBtn" onclick="saveConfig()">Mentés</button>
+            <button class="btn btn-secondary" id="testBtn" onclick="testMqtt()">MQTT kapcsolat tesztelése</button>
+            <div class="toast" id="saveToast"></div>
+            <div class="toast" id="testToast"></div>
         </div>
 
-        <div class="plates-list" id="platesList"></div>
-
-        <div class="plate-add-row">
-            <div class="field" style="margin:0">
-                <label>Rendszám</label>
-                <input class="input" type="text" id="newPlate" placeholder="pl. ABC-123">
+        <!-- Home Assistant konfiguráció -->
+        <div class="section" style="margin-top:20px;">
+            <div class="section-title">Home Assistant konfiguráció</div>
+            <div class="help" style="margin-bottom:14px;">
+                Másold be az alábbi YAML-t a Home Assistant konfigurációjába. A generált kód mindig a jelenlegi beállításaidat tükrözi.
             </div>
-            <div class="field" style="margin:0">
-                <label>Megnevezés</label>
-                <input class="input" type="text" id="newName" placeholder="pl. Saját autó">
-            </div>
-            <button class="btn btn-primary" onclick="addPlate()" style="height: 42px; margin-bottom: 0;">+ Hozzáad</button>
-        </div>
-        <div class="toast" id="plateToast" style="margin-top: 10px;"></div>
-    </div>
 
-</div>
+            <!-- Snapshot URL -->
+            <div style="background:rgba(91,124,250,0.07);border:1px solid rgba(91,124,250,0.22);border-radius:10px;padding:12px 14px;margin-bottom:16px;">
+                <div style="font-size:11px;font-weight:700;color:var(--accent-strong);margin-bottom:7px;text-transform:uppercase;letter-spacing:0.06em;">Kamera snapshot URL</div>
+                <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
+                    <code id="snapshotUrlDisplay" style="font-family:'IBM Plex Mono',monospace;font-size:11px;background:rgba(0,0,0,0.08);padding:5px 9px;border-radius:6px;flex:1;word-break:break-all;"></code>
+                    <button onclick="copySnapshotUrl()" class="copy-btn" id="snapshotCopyBtn" style="white-space:nowrap;margin-top:0;">Másolás</button>
+                </div>
+                <div style="font-size:11px;color:var(--muted);margin-top:5px;">Per-kamera: URL + <code>?ip=192.168.0.x</code></div>
+            </div>
+
+            <div class="ha-tabs">
+                <button class="ha-tab active" onclick="showHaTab('mqtt', this)">MQTT szenzor</button>
+                <button class="ha-tab" onclick="showHaTab('rest', this)">REST szenzor</button>
+                <button class="ha-tab" onclick="showHaTab('webhook', this)">Webhook automáció</button>
+                <button class="ha-tab" onclick="showHaTab('dashboard', this)">Dashboard kártya</button>
+                <button class="ha-tab" onclick="showHaTab('camera', this)">Kamera stream</button>
+            </div>
+
+            <pre class="yaml-block" id="haYamlOutput"></pre>
+
+            <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;">
+                <button class="copy-btn" id="copyBtn" onclick="copyHaYaml()">Másolás vágólapra</button>
+                <div class="help" id="haTabHelp" style="margin:0;"></div>
+            </div>
+        </div>
+
+        <!-- Kamerák -->
+        <div class="section" style="margin-top:20px;">
+            <div class="section-title">Kamerák kezelése</div>
+            <div class="help" style="margin-bottom:14px;">
+                A kamerák IP-cím alapján azonosítódnak. Minden kamerához beállíthatsz egyedi relé triggert.
+            </div>
+
+            <div class="plates-list" id="camerasList"></div>
+
+            <hr class="divider">
+            <div style="font-size:13px;font-weight:600;margin-bottom:10px;">Új kamera hozzáadása</div>
+
+            <div class="grid-2">
+                <div class="field">
+                    <label>IP cím</label>
+                    <input class="input" type="text" id="newCameraIp" placeholder="pl. 192.168.0.101">
+                </div>
+                <div class="field">
+                    <label>Megnevezés</label>
+                    <input class="input" type="text" id="newCameraName" placeholder="pl. Bejárati kapu">
+                </div>
+            </div>
+
+            <div class="field">
+                <div class="toggle-row">
+                    <div class="toggle-label-group">
+                        <label>Per-kamera relé triggerelés</label>
+                        <div class="help">Ha be van kapcsolva, ez a kamera saját relé URL-t hív.</div>
+                    </div>
+                    <label class="switch">
+                        <input type="checkbox" id="newCameraRelayEnabled" onchange="updateNewCameraRelayVisibility()">
+                        <span class="slider"></span>
+                    </label>
+                </div>
+            </div>
+
+            <div id="newCameraRelayFields" style="display:none;">
+                <div class="field">
+                    <label>Relé URL</label>
+                    <input class="input" type="text" id="newCameraRelayUrl" placeholder="pl. http://192.168.0.50/relay/0?turn=on">
+                </div>
+                <div class="grid-2">
+                    <div class="field">
+                        <label>HTTP módszer</label>
+                        <select class="input" id="newCameraRelayMethod" onchange="updateNewCameraBodyVisibility()">
+                            <option value="GET">GET (Shelly Gen1)</option>
+                            <option value="POST">POST (Shelly Gen2+)</option>
+                        </select>
+                    </div>
+                    <div class="field">
+                        <label>Triggerelés iránya</label>
+                        <select class="input" id="newCameraRelayTriggerOn">
+                            <option value="arrival">Csak érkezéskor</option>
+                            <option value="departure">Csak távozáskor</option>
+                            <option value="both">Mindkét irányban</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="field" id="newCameraBodyField">
+                    <label>POST törzs</label>
+                    <input class="input" type="text" id="newCameraRelayBody" value='{"id":0,"on":true}'>
+                </div>
+            </div>
+
+            <div class="action-row" style="margin-top:8px;">
+                <button class="btn btn-primary" onclick="addCamera()">+ Hozzáad</button>
+            </div>
+            <div class="toast" id="cameraToast" style="margin-top:10px;"></div>
+        </div>
+
+        <!-- Ismert rendszámok -->
+        <div class="section" style="margin-top:20px;">
+            <div class="section-title">Ismert rendszámok</div>
+            <div class="help" style="margin-bottom:14px;">
+                Az itt felvett rendszámokhoz nevet rendelhetsz. Ha a kamera felismer egy ismert rendszámot, az MQTT payload-ban a <code>friendly_name</code> és a <code>"known": true</code> mező is szerepel.
+            </div>
+
+            <div class="plates-list" id="platesList"></div>
+
+            <div class="plate-add-row">
+                <div class="field" style="margin:0">
+                    <label>Rendszám</label>
+                    <input class="input" type="text" id="newPlate" placeholder="pl. ABC-123">
+                </div>
+                <div class="field" style="margin:0">
+                    <label>Megnevezés</label>
+                    <input class="input" type="text" id="newName" placeholder="pl. Saját autó">
+                </div>
+                <button class="btn btn-primary" onclick="addPlate()" style="height:42px;margin-bottom:0;">+ Hozzáad</button>
+            </div>
+            <div class="toast" id="plateToast" style="margin-top:10px;"></div>
+        </div>
+
+    </div><!-- /page -->
+</main>
 
 <script>
-    // Theme
-    const themeToggleBtn = document.getElementById("themeToggle");
-    const prefersDark = window.matchMedia("(prefers-color-scheme: dark)");
+    // ── Theme ──────────────────────────────────────────────────────────────────
+    const themeToggleBtn = document.getElementById('themeToggle');
+    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)');
 
     function applyTheme(mode) {
-        document.body.classList.toggle("theme-dark", mode === "dark");
-        themeToggleBtn.textContent = mode === "dark" ? "☀️" : "🌙";
-        localStorage.setItem("anpr-theme", mode);
+        document.body.classList.toggle('theme-dark', mode === 'dark');
+        document.getElementById('themeIconMoon').style.display = mode === 'dark' ? 'none' : '';
+        document.getElementById('themeIconSun').style.display = mode === 'dark' ? '' : 'none';
+        document.getElementById('themeLabel').textContent = mode === 'dark' ? 'Világos mód' : 'Sötét mód';
+        localStorage.setItem('anpr-theme', mode);
     }
 
-    const savedTheme = localStorage.getItem("anpr-theme");
-    applyTheme(savedTheme || (prefersDark.matches ? "dark" : "light"));
-    themeToggleBtn.addEventListener("click", () => {
-        applyTheme(document.body.classList.contains("theme-dark") ? "light" : "dark");
+    const savedTheme = localStorage.getItem('anpr-theme');
+    applyTheme(savedTheme || (prefersDark.matches ? 'dark' : 'light'));
+    themeToggleBtn.addEventListener('click', () => {
+        applyTheme(document.body.classList.contains('theme-dark') ? 'light' : 'dark');
     });
 
-    // Load config from server
+    // ── Mobile sidebar ─────────────────────────────────────────────────────────
+    function openSidebar() {
+        document.getElementById('sidebar').classList.add('open');
+        document.getElementById('sidebarOverlay').classList.add('open');
+    }
+    function closeSidebar() {
+        document.getElementById('sidebar').classList.remove('open');
+        document.getElementById('sidebarOverlay').classList.remove('open');
+    }
+
+    // ── Config load ────────────────────────────────────────────────────────────
     const config = {{ config | tojson }};
     const boolVal = v => v === '1' || v === 'true' || v === true;
 
@@ -997,9 +1039,10 @@
     document.getElementById('email_attach_image').checked = boolVal(config.email_attach_image ?? '1');
     updateRelayBodyVisibility();
 
-    // Toast helper
+    // ── Toast helper ───────────────────────────────────────────────────────────
     function showToast(id, msg, type, duration = 4000) {
         const el = document.getElementById(id);
+        if (!el) return;
         el.textContent = msg;
         el.className = `toast ${type}`;
         el.style.display = 'block';
@@ -1056,19 +1099,19 @@
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(getFormData())
             });
-            const msg = res.ok ? '✓ Mentve!' : '✗ Mentési hiba!';
+            const msg = res.ok ? 'Mentve!' : 'Mentési hiba!';
             const type = res.ok ? 'success' : 'error';
             toastIds.forEach(id => { if(document.getElementById(id)) showToast(id, msg, type); });
             if (res.ok) checkMqttStatus();
         } catch (e) {
-            toastIds.forEach(id => { if(document.getElementById(id)) showToast(id, '✗ Hálózati hiba!', 'error'); });
+            toastIds.forEach(id => { if(document.getElementById(id)) showToast(id, 'Hálózati hiba!', 'error'); });
         }
-        allBtns.forEach(b => { b.disabled = false; b.textContent = '💾 Mentés'; });
+        allBtns.forEach(b => { b.disabled = false; b.textContent = 'Mentés'; });
     }
 
     async function testEmail() {
         const btn = document.getElementById('testEmailBtn');
-        btn.disabled = true; btn.textContent = '📧 Küldés...';
+        btn.disabled = true; btn.textContent = 'Küldés...';
         showToast('emailToast', 'Küldés folyamatban...', 'success', 30000);
         try {
             const res = await fetch('/api/email/test', {
@@ -1079,15 +1122,14 @@
             const json = await res.json();
             showToast('emailToast', json.message, res.ok ? 'success' : 'error');
         } catch(e) {
-            showToast('emailToast', '✗ Hálózati hiba!', 'error');
+            showToast('emailToast', 'Hálózati hiba!', 'error');
         }
-        btn.disabled = false; btn.textContent = '📧 Teszt e-mail küldése';
+        btn.disabled = false; btn.textContent = 'Teszt e-mail küldése';
     }
 
     async function testMqtt() {
         const btn = document.getElementById('testBtn');
-        btn.disabled = true;
-        btn.textContent = '🔌 Kapcsolódás...';
+        btn.disabled = true; btn.textContent = 'Kapcsolódás...';
         showToast('testToast', 'Kapcsolódás folyamatban...', 'success', 30000);
         try {
             const res = await fetch('/api/mqtt/test', {
@@ -1099,13 +1141,12 @@
             showToast('testToast', json.message, json.connected ? 'success' : 'error');
             checkMqttStatus();
         } catch (e) {
-            showToast('testToast', '✗ Hálózati hiba!', 'error');
+            showToast('testToast', 'Hálózati hiba!', 'error');
         }
-        btn.disabled = false;
-        btn.textContent = '🔌 Kapcsolat tesztelése';
+        btn.disabled = false; btn.textContent = 'MQTT kapcsolat tesztelése';
     }
 
-    // MQTT status
+    // ── MQTT státusz ───────────────────────────────────────────────────────────
     async function checkMqttStatus() {
         try {
             const res = await fetch('/api/mqtt/status');
@@ -1120,7 +1161,7 @@
                 txt.textContent = 'MQTT: él';
             } else {
                 dot.className = 'status-dot disconnected';
-                txt.textContent = 'MQTT: nem csatlakozik';
+                txt.textContent = 'MQTT';
             }
         } catch (e) {}
     }
@@ -1128,14 +1169,14 @@
     checkMqttStatus();
     setInterval(checkMqttStatus, 10000);
 
-    // Cameras
+    // ── Cameras ────────────────────────────────────────────────────────────────
     let cameras = {{ cameras | tojson }};
 
     function relayBadge(c) {
         if (!c.relay_enabled || !c.relay_url) return '';
         const method = c.relay_method || 'GET';
         const dir = { arrival: 'érkezés', departure: 'távozás', both: 'mindkét irány' }[c.relay_trigger_on] || c.relay_trigger_on;
-        return `<span style="font-size:11px;padding:2px 8px;border-radius:999px;background:rgba(46,204,113,0.12);border:1px solid rgba(46,204,113,0.3);color:#1e7a42;font-family:'IBM Plex Mono',monospace;margin-left:8px;">🔌 ${method} · ${dir}</span>`;
+        return `<span style="font-size:11px;padding:2px 8px;border-radius:999px;background:rgba(46,204,113,0.12);border:1px solid rgba(46,204,113,0.3);color:#1e7a42;font-family:'IBM Plex Mono',monospace;margin-left:8px;">${method} · ${dir}</span>`;
     }
 
     function renderCameras() {
@@ -1174,7 +1215,7 @@
         const relay_method = document.getElementById('newCameraRelayMethod').value;
         const relay_trigger_on = document.getElementById('newCameraRelayTriggerOn').value;
         const relay_body = document.getElementById('newCameraRelayBody').value.trim();
-        if (!ip) { showToast('cameraToast', '✗ Az IP cím kötelező!', 'error'); return; }
+        if (!ip) { showToast('cameraToast', 'Az IP cím kötelező!', 'error'); return; }
         const res = await fetch('/api/cameras', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
@@ -1188,9 +1229,9 @@
             document.getElementById('newCameraRelayUrl').value = '';
             updateNewCameraRelayVisibility();
             renderCameras();
-            showToast('cameraToast', `✓ ${ip} hozzáadva!`, 'success');
+            showToast('cameraToast', `${ip} hozzáadva!`, 'success');
         } else {
-            showToast('cameraToast', '✗ Hiba a mentés során!', 'error');
+            showToast('cameraToast', 'Hiba a mentés során!', 'error');
         }
     }
 
@@ -1213,7 +1254,7 @@
     updateNewCameraRelayVisibility();
     updateNewCameraBodyVisibility();
 
-    // Known plates
+    // ── Known plates ───────────────────────────────────────────────────────────
     let knownPlates = {{ known_plates | tojson }};
 
     function renderPlates() {
@@ -1236,7 +1277,7 @@
     async function addPlate() {
         const plate = document.getElementById('newPlate').value.trim().toUpperCase();
         const name = document.getElementById('newName').value.trim();
-        if (!plate) { showToast('plateToast', '✗ A rendszám kötelező!', 'error'); return; }
+        if (!plate) { showToast('plateToast', 'A rendszám kötelező!', 'error'); return; }
         const res = await fetch('/api/known-plates', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
@@ -1248,9 +1289,9 @@
             document.getElementById('newPlate').value = '';
             document.getElementById('newName').value = '';
             renderPlates();
-            showToast('plateToast', `✓ ${plate} hozzáadva!`, 'success');
+            showToast('plateToast', `${plate} hozzáadva!`, 'success');
         } else {
-            showToast('plateToast', '✗ Hiba a mentés során!', 'error');
+            showToast('plateToast', 'Hiba a mentés során!', 'error');
         }
     }
 
@@ -1277,15 +1318,15 @@
     }
     document.getElementById('relay_method').addEventListener('change', updateRelayBodyVisibility);
 
-    // ---- Home Assistant YAML generátor ----
+    // ── HA YAML generátor ──────────────────────────────────────────────────────
     let currentHaTab = 'mqtt';
 
     const haTabHelps = {
-        mqtt: 'Másold be a <code>configuration.yaml</code> fájlba (vagy <code>mqtt:</code> szekció). MQTT Discovery esetén ez automatikusan is létrejön.',
-        rest: 'Másold be a <code>configuration.yaml</code> fájlba. A HA 30 másodpercenként lekérdezi az ANPR szervert.',
-        webhook: 'Másold be az <code>automations.yaml</code> fájlba, vagy importáld az Automatizálások szerkesztőből. Az ANPR szerver hívja meg HA-t.',
-        dashboard: 'Lovelace szerkesztőben → Kártya hozzáadása → Manuális (YAML nézet) → illeszd be.',
-        camera: 'Másold be a <code>configuration.yaml</code> fájlba. HA-ban a <strong>Beállítások → Eszközök → Kamerák</strong> alatt jelenik meg. A snapshot URL mindig az <em>utolsó felismert kép</em>et adja vissza.',
+        mqtt: 'Másold be a <code>configuration.yaml</code> fájlba.',
+        rest: 'A HA 30 másodpercenként lekérdezi az ANPR szervert.',
+        webhook: 'Másold be az <code>automations.yaml</code> fájlba.',
+        dashboard: 'Lovelace szerkesztőben → Kártya hozzáadása → Manuális.',
+        camera: 'Másold be a <code>configuration.yaml</code> fájlba.',
     };
 
     function getHaConfig() {
@@ -1302,7 +1343,6 @@
     {% raw %}
     function generateMqttYaml(c) {
         return `# configuration.yaml — MQTT szenzor
-# (ha már van mqtt: szekció, csak a sensor részt add hozzá)
 
 mqtt:
   sensor:
@@ -1338,13 +1378,12 @@ mqtt:
 
     function generateRestYaml(c) {
         return `# configuration.yaml — REST szenzor
-# A HA 30 másodpercenként lekérdezi az ANPR szervert
 
 rest:
   - resource: "${c.base_url}/api/latest?count=1"
     authentication: basic
     username: admin
-    password: !secret anpr_password   # secrets.yaml: anpr_password: "password123"
+    password: !secret anpr_password
     scan_interval: 30
     sensor:
       - name: "ANPR Utolsó rendszám"
@@ -1364,7 +1403,7 @@ rest:
           - friendly_name
         icon: mdi:car
 
-# secrets.yaml-ba add hozzá:
+# secrets.yaml:
 # anpr_password: "password123"`;
     }
 
@@ -1373,7 +1412,6 @@ rest:
         const departureId = (c.webhook_departure.match(/webhook\/([^/?]+)/) || [])[1] || 'anpr_tavozas';
         const unknownId = (c.webhook_unknown.match(/webhook\/([^/?]+)/) || [])[1] || 'anpr_ismeretlen';
         return `# automations.yaml — Webhook automatizálások
-# Az ANPR szerver POST kérést küld HA-nak ismert rendszám észlelésekor
 
 - alias: "ANPR Ismert autó érkezett"
   trigger:
@@ -1384,14 +1422,10 @@ rest:
   action:
     - service: notify.persistent_notification
       data:
-        title: "🚗 ANPR – Érkezés"
+        title: "ANPR – Érkezés"
         message: >
           {{ trigger.json.friendly_name }} érkezett
           ({{ trigger.json.license_plate }})
-    # Példa: kapu nyitása
-    # - service: switch.turn_on
-    #   target:
-    #     entity_id: switch.kapunyito
 
 - alias: "ANPR Ismert autó távozott"
   trigger:
@@ -1402,7 +1436,7 @@ rest:
   action:
     - service: notify.persistent_notification
       data:
-        title: "🚗 ANPR – Távozás"
+        title: "ANPR – Távozás"
         message: "{{ trigger.json.friendly_name }} távozott"
 
 - alias: "ANPR Ismeretlen rendszám"
@@ -1412,16 +1446,14 @@ rest:
       allowed_methods: [POST]
       local_only: true
   action:
-    - service: notify.mobile_app_telefon   # cseréld ki a saját app nevére
+    - service: notify.mobile_app_telefon
       data:
-        title: "⚠️ Ismeretlen autó"
+        title: "Ismeretlen autó"
         message: "{{ trigger.json.license_plate }} észlelve"`;
     }
 
     function generateCameraYaml(c) {
         return `# configuration.yaml — Generic kamera (utolsó ANPR kép)
-# A snapshot URL mindig a legutóbbi kameraképet adja vissza.
-# HA-ban: Beállítások → Eszközök és szolgáltatások → Kamerák
 
 camera:
   - platform: generic
@@ -1430,9 +1462,9 @@ camera:
     username: admin
     password: !secret anpr_password
     verify_ssl: false
-    scan_interval: 10   # frissítési időköz másodpercben
+    scan_interval: 10
 
-# Ha több kamerád van, minden kamerához külön:
+# Per-kamera (ha több kamerád van):
 # camera:
 #   - platform: generic
 #     name: "ANPR – Bejárati kapu"
@@ -1440,23 +1472,9 @@ camera:
 #     username: admin
 #     password: !secret anpr_password
 #     verify_ssl: false
-#
-#   - platform: generic
-#     name: "ANPR – Garázs"
-#     still_image_url: "${c.base_url}/api/snapshot?ip=192.168.0.102"
-#     username: admin
-#     password: !secret anpr_password
-#     verify_ssl: false
 
-# secrets.yaml-ba add hozzá:
-# anpr_password: "password123"
-
-# --- Dashboard kártya a képhez ---
-# type: picture-entity
-# entity: sensor.anpr_utolso_rendszam
-# camera_image: camera.anpr_utolso_kamerakep
-# show_state: true
-# show_name: true`;
+# secrets.yaml:
+# anpr_password: "password123"`;
     }
 
     function generateDashboardYaml(c) {
@@ -1465,7 +1483,7 @@ camera:
 type: vertical-stack
 cards:
   - type: entities
-    title: 🚗 ANPR – Utolsó esemény
+    title: ANPR – Utolsó esemény
     entities:
       - entity: sensor.anpr_utolso_rendszam
         name: Rendszám
@@ -1498,9 +1516,7 @@ cards:
   - type: picture
     title: Utolsó kamerakép
     image: >-
-      {{ state_attr('sensor.anpr_utolso_rendszam', 'image_url') }}
-    # vagy fixált URL-lel:
-    # image: "${c.base_url}/received_images/latest.jpg"`;
+      {{ state_attr('sensor.anpr_utolso_rendszam', 'image_url') }}`;
     }
     {% endraw %}
 
@@ -1521,27 +1537,25 @@ cards:
         document.getElementById('haTabHelp').innerHTML = haTabHelps[tab] || '';
         const copyBtn = document.getElementById('copyBtn');
         copyBtn.classList.remove('copied');
-        copyBtn.textContent = '📋 Másolás vágólapra';
+        copyBtn.textContent = 'Másolás vágólapra';
     }
 
     async function copyHaYaml() {
         const text = document.getElementById('haYamlOutput').textContent;
         await navigator.clipboard.writeText(text);
         const btn = document.getElementById('copyBtn');
-        btn.textContent = '✓ Másolva!';
+        btn.textContent = 'Másolva!';
         btn.classList.add('copied');
-        setTimeout(() => { btn.textContent = '📋 Másolás vágólapra'; btn.classList.remove('copied'); }, 2500);
+        setTimeout(() => { btn.textContent = 'Másolás vágólapra'; btn.classList.remove('copied'); }, 2500);
     }
 
-    // Init HA tab
     showHaTab('mqtt', document.querySelector('.ha-tab.active'));
 
-    // Snapshot URL megjelenítése
+    // ── Snapshot URL ───────────────────────────────────────────────────────────
     function updateSnapshotUrl() {
         const baseUrl = (document.getElementById('mqtt_base_url').value.trim() || 'http://192.168.0.136:5555').replace(/\/$/, '');
-        const url = baseUrl + '/api/snapshot';
         const el = document.getElementById('snapshotUrlDisplay');
-        if (el) el.textContent = url;
+        if (el) el.textContent = baseUrl + '/api/snapshot';
     }
     updateSnapshotUrl();
     document.getElementById('mqtt_base_url').addEventListener('input', updateSnapshotUrl);
@@ -1550,39 +1564,31 @@ cards:
         const url = document.getElementById('snapshotUrlDisplay').textContent;
         navigator.clipboard.writeText(url).then(() => {
             const btn = document.getElementById('snapshotCopyBtn');
-            btn.textContent = '✓ Másolva!';
+            btn.textContent = 'Másolva!';
             btn.classList.add('copied');
-            setTimeout(() => { btn.textContent = '📋 Másolás'; btn.classList.remove('copied'); }, 2000);
+            setTimeout(() => { btn.textContent = 'Másolás'; btn.classList.remove('copied'); }, 2000);
         });
     }
 
+    // ── Cleanup ────────────────────────────────────────────────────────────────
     async function runCleanup() {
         const btn = document.getElementById('cleanupBtn');
-        btn.disabled = true;
-        btn.textContent = '🧹 Takarítás...';
+        btn.disabled = true; btn.textContent = 'Takarítás...';
         try {
             const res = await fetch('/api/events/cleanup', { method: 'POST' });
             const json = await res.json();
             if (res.ok) {
-                showToast('cleanupToast', '✓ Takarítás kész!', 'success');
+                showToast('cleanupToast', 'Takarítás kész!', 'success');
                 document.getElementById('storageInfo').textContent =
                     `Események: ${json.total_events} db  |  Képpel: ${json.events_with_image} db`;
             } else {
-                showToast('cleanupToast', '✗ Hiba a takarítás során!', 'error');
+                showToast('cleanupToast', 'Hiba a takarítás során!', 'error');
             }
         } catch (e) {
-            showToast('cleanupToast', '✗ Hálózati hiba!', 'error');
+            showToast('cleanupToast', 'Hálózati hiba!', 'error');
         }
-        btn.disabled = false;
-        btn.textContent = '🧹 Azonnali takarítás';
+        btn.disabled = false; btn.textContent = 'Azonnali takarítás';
     }
 </script>
-
-<footer style="text-align:center;padding:24px 20px;font-size:12px;color:var(--muted);border-top:1px solid var(--border);margin-top:40px;">
-    © 2025 <strong>Czibolya Dániel</strong> &nbsp;·&nbsp;
-    <a href="https://github.com/czdanika" target="_blank" rel="noopener"
-       style="color:var(--accent-strong);text-decoration:none;">github.com/czdanika</a>
-    &nbsp;·&nbsp; ANPR Projekt v2
-</footer>
 </body>
 </html>

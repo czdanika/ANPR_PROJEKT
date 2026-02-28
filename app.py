@@ -22,6 +22,8 @@ except ImportError:
 
 app = Flask(__name__)
 
+APP_VERSION = "2.1.0"
+
 IMAGE_SAVE_PATH = './received_images'
 DATABASE_FILE = "vehicles.db"
 LOG_XML_DATA = True
@@ -831,7 +833,8 @@ def vehicle_list():
     cameras = get_cameras_dict()
     return render_template('vehicles.html', vehicles=vehicles,
                            auto_refresh=auto_refresh, refresh_interval=refresh_interval,
-                           cameras=cameras, page_size=page_size, total_count=total_count)
+                           cameras=cameras, page_size=page_size, total_count=total_count,
+                           version=APP_VERSION)
 
 
 @app.route('/api/vehicles')
@@ -930,7 +933,7 @@ def config_page():
     config = get_all_config()
     known_plates = fetch_known_plates()
     cameras = fetch_cameras()
-    return render_template('config.html', config=config, known_plates=known_plates, cameras=cameras)
+    return render_template('config.html', config=config, known_plates=known_plates, cameras=cameras, version=APP_VERSION)
 
 
 @app.route('/api/config', methods=['POST'])
@@ -1134,7 +1137,7 @@ def test_email():
 @app.route('/stats')
 @auth.login_required
 def stats_page():
-    return render_template('stats.html')
+    return render_template('stats.html', version=APP_VERSION)
 
 
 @app.route('/api/stats')
