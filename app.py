@@ -1,6 +1,7 @@
 from flask import Flask, request, render_template, send_from_directory, jsonify, Response, stream_with_context
 from flask_httpauth import HTTPBasicAuth
 import os
+import shutil
 import sqlite3
 import xml.etree.ElementTree as ET
 import json
@@ -770,6 +771,7 @@ def receive_event():
                     with open(file_path, 'wb') as f:
                         f.write(file.read())
                     event_data["image_path"] = f"/received_images/{file.filename}"
+                    shutil.copy2(file_path, os.path.join(IMAGE_SAVE_PATH, 'latest.jpg'))
                 elif file.filename.endswith('.xml'):
                     try:
                         xml_data = file.read()
