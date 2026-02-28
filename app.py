@@ -22,7 +22,7 @@ except ImportError:
 
 app = Flask(__name__)
 
-APP_VERSION = "2.1.0"
+APP_VERSION = "2.2602"
 
 IMAGE_SAVE_PATH = './received_images'
 DATABASE_FILE = "vehicles.db"
