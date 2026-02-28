@@ -28,6 +28,29 @@ sshpass -p 'admin' ssh admin@192.168.0.136 \
   "cd /home/admin/ANPR_PROJEKT_v2 && docker-compose down && docker-compose up -d --build"
 ```
 
+## NAS deployment
+
+A NAS-on nincs git, ezért GitHub ZIP-ből frissítünk.
+
+### Helyes update script
+
+```bash
+cd /volume1/docker/ANPR_PROJEKT
+curl -L -o anpr.zip "https://github.com/czdanika/ANPR_PROJEKT/archive/refs/heads/main.zip"
+python3 -c "import zipfile; zipfile.ZipFile('anpr.zip').extractall('.')"
+cp -rf ANPR_PROJEKT-main/. .
+rm -rf ANPR_PROJEKT-main anpr.zip
+sudo docker compose up -d --build
+```
+
+### Fontos: `cp -rf` és nem `mv`
+
+A `mv` parancs **nem írja felül a meglévő mappákat**, hanem belemozgatja azokat.
+Például `mv ANPR_PROJEKT-main/templates .` létrehozza a `templates/templates/` struktúrát
+a régi `templates/` felülírása helyett – ezért a régi HTML fájlok maradnak érvényben.
+
+A `cp -rf ANPR_PROJEKT-main/. .` viszont minden fájlt és mappát felülír.
+
 ## Flask app
 
 - **Helyi dev szerver:** http://localhost:5555

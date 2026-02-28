@@ -1,6 +1,7 @@
 from flask import Flask, request, render_template, send_from_directory, jsonify, Response, stream_with_context
 from flask_httpauth import HTTPBasicAuth
 import os
+import shutil
 import sqlite3
 import xml.etree.ElementTree as ET
 import json
@@ -718,7 +719,6 @@ def serve_image(filename):
 
 
 @app.route('/api/snapshot')
-@auth.login_required
 def latest_snapshot():
     """Returns the latest camera image as JPEG. Used by HA generic camera.
     Optional ?ip=<camera_ip> to filter by specific camera."""
@@ -771,6 +771,7 @@ def receive_event():
                     with open(file_path, 'wb') as f:
                         f.write(file.read())
                     event_data["image_path"] = f"/received_images/{file.filename}"
+                    shutil.copy2(file_path, os.path.join(IMAGE_SAVE_PATH, 'latest.jpg'))
                 elif file.filename.endswith('.xml'):
                     try:
                         xml_data = file.read()
@@ -1216,8 +1217,28 @@ def stats_api():
         return jsonify({'error': str(e)}), 500
 
 
+def init_latest_jpg():
+    """Induláskor létrehozza a latest.jpg-t a legutóbbi képből, ha még nem létezik."""
+    latest_path = os.path.join(IMAGE_SAVE_PATH, 'latest.jpg')
+    if os.path.exists(latest_path):
+        return
+    try:
+        conn = sqlite3.connect(DATABASE_FILE)
+        cursor = conn.cursor()
+        cursor.execute("SELECT image_path FROM anpr_events WHERE image_path != '' ORDER BY timestamp DESC LIMIT 1")
+        row = cursor.fetchone()
+        conn.close()
+        if row and row[0]:
+            src = '.' + row[0]
+            if os.path.exists(src):
+                shutil.copy2(src, latest_path)
+    except Exception as e:
+        log_with_timestamp(f"latest.jpg init hiba: {e}")
+
+
 if __name__ == "__main__":
     initialize_database()
+    init_latest_jpg()
     if get_config('mqtt_enabled', '0') == '1':
         threading.Thread(target=connect_mqtt, daemon=True).start()
     port = int(os.environ.get('ANPR_PORT', 5555))
