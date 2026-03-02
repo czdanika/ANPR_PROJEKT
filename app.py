@@ -1,4 +1,4 @@
-from flask import Flask, request, render_template, send_from_directory, jsonify, Response, stream_with_context
+from flask import Flask, request, render_template, send_from_directory, jsonify, Response, stream_with_context, make_response
 from flask_httpauth import HTTPBasicAuth
 import os
 import shutil
@@ -725,7 +725,10 @@ def serve_latest_jpg():
         if not row or not row[0]:
             return "Nincs elérhető kép", 404
         filename = os.path.basename(row[0])
-        return send_from_directory(IMAGE_SAVE_PATH, filename)
+        response = make_response(send_from_directory(IMAGE_SAVE_PATH, filename))
+        response.headers['Cache-Control'] = 'no-store, no-cache, must-revalidate, max-age=0'
+        response.headers['Pragma'] = 'no-cache'
+        return response
     except Exception as e:
         log_with_timestamp(f"latest.jpg hiba: {e}")
         return "Szerver hiba", 500
