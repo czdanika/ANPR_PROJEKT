@@ -713,6 +713,24 @@ def fetch_vehicles_count():
         return 0
 
 
+@app.route('/received_images/latest.jpg')
+def serve_latest_jpg():
+    """Mindig az utolsó kameraképet adja vissza – fájlírás nélkül, DB-ből."""
+    try:
+        conn = sqlite3.connect(DATABASE_FILE)
+        cursor = conn.cursor()
+        cursor.execute("SELECT image_path FROM anpr_events WHERE image_path != '' ORDER BY timestamp DESC LIMIT 1")
+        row = cursor.fetchone()
+        conn.close()
+        if not row or not row[0]:
+            return "Nincs elérhető kép", 404
+        filename = os.path.basename(row[0])
+        return send_from_directory(IMAGE_SAVE_PATH, filename)
+    except Exception as e:
+        log_with_timestamp(f"latest.jpg hiba: {e}")
+        return "Szerver hiba", 500
+
+
 @app.route('/received_images/<path:filename>')
 def serve_image(filename):
     return send_from_directory(IMAGE_SAVE_PATH, filename)
@@ -771,12 +789,6 @@ def receive_event():
                     with open(file_path, 'wb') as f:
                         f.write(file.read())
                     event_data["image_path"] = f"/received_images/{file.filename}"
-                    try:
-                        latest_path = os.path.join(IMAGE_SAVE_PATH, 'latest.jpg')
-                        with open(file_path, 'rb') as src, open(latest_path, 'wb') as dst:
-                            dst.write(src.read())
-                    except Exception as e:
-                        log_with_timestamp(f"latest.jpg frissítési hiba: {e}")
                 elif file.filename.endswith('.xml'):
                     try:
                         xml_data = file.read()
