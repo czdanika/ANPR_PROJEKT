@@ -11,3 +11,4 @@ services:
       - ANPR_PORT=${ANPR_PORT:-5555}
       - ANPR_ADMIN_PASSWORD=${ANPR_ADMIN_PASSWORD:-password123}
       - ANPR_USER_PASSWORD=${ANPR_USER_PASSWORD:-userpassword}
+      - TZ=Europe/Budapest
