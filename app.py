@@ -646,8 +646,8 @@ def insert_event_to_db(event_data):
         cursor.execute('''
             INSERT INTO anpr_events (
                 ip_address, event_type, license_plate, confidence_level,
-                vehicle_type, vehicle_color, vehicle_direction, image_path
-            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+                vehicle_type, vehicle_color, vehicle_direction, image_path, timestamp
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
         ''', (
             event_data['ip_address'],
             event_data['event_type'],
@@ -656,7 +656,8 @@ def insert_event_to_db(event_data):
             event_data['vehicle_type'],
             event_data['vehicle_color'],
             event_data['vehicle_direction'],
-            event_data['image_path']
+            event_data['image_path'],
+            datetime.now().strftime('%Y-%m-%d %H:%M:%S')
         ))
         conn.commit()
         conn.close()
