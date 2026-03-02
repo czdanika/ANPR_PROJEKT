@@ -771,7 +771,12 @@ def receive_event():
                     with open(file_path, 'wb') as f:
                         f.write(file.read())
                     event_data["image_path"] = f"/received_images/{file.filename}"
-                    shutil.copy2(file_path, os.path.join(IMAGE_SAVE_PATH, 'latest.jpg'))
+                    try:
+                        latest_path = os.path.join(IMAGE_SAVE_PATH, 'latest.jpg')
+                        with open(file_path, 'rb') as src, open(latest_path, 'wb') as dst:
+                            dst.write(src.read())
+                    except Exception as e:
+                        log_with_timestamp(f"latest.jpg frissítési hiba: {e}")
                 elif file.filename.endswith('.xml'):
                     try:
                         xml_data = file.read()
